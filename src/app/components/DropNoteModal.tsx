@@ -43,7 +43,7 @@ export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps)
               id="message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="form-input-message w-full p-3 rounded-md border border-border bg-input-background resize-none text-body-sans"
+              className="form-input-message w-full p-3 rounded-md border border-border bg-input-background resize-none text-annotation-script"
               rows={4}
               placeholder="Write your note here..."
               required
@@ -59,7 +59,7 @@ export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps)
               type="text"
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
-              className="form-input-author w-full p-3 rounded-md border border-border bg-input-background text-body-sans"
+              className="form-input-author w-full p-3 rounded-md border border-border bg-input-background text-annotation-script"
               placeholder="Anonymous"
             />
           </div>

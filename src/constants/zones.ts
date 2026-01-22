@@ -1,5 +1,5 @@
 // Zone height constants in viewport heights (vh)
-export const CARGO_VH = 120;
+export const CARGO_VH = 100;
 export const FREEFALL_VH = 500;
 export const BEACH_VH = 140;
 

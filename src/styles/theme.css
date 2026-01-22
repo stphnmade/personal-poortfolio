@@ -41,8 +41,8 @@
   --sidebar-ring: oklch(0.708 0 0);
   
   /* Typography Tokens */
-  --font-sans: system-ui, -apple-system, sans-serif;
-  --font-script: 'Dancing Script', cursive, system-ui;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-script: 'Pinyon Script', cursive, system-ui;
   
   /* H1 / Sans */
   --text-h1-font: var(--font-sans);
