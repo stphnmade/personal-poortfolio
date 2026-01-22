@@ -75,15 +75,8 @@ export function FreefallSection({
   const rotateY =
     ((mousePos.x - viewport.width / 2) || 0) * -0.05
 
-  const skyTintOpacity = useTransform(freefallProgress, [0.8, 1], [0, 1])
-
   return (
-    <div className="relative h-[500vh] bg-[#F5F5F5] overflow-hidden">
-      {/* Sunny tint as we approach the beach */}
-      <motion.div
-        className="pointer-events-none absolute inset-0 z-0 bg-[#FFF7E6]"
-        style={{ opacity: skyTintOpacity }}
-      />
+    <div className="relative h-[500vh] overflow-hidden">
 
       {/* THE SKYDIVER (Sticky Anchor) */}
       <motion.div

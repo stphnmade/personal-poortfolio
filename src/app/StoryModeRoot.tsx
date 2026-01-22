@@ -5,6 +5,7 @@ import { FreefallSection } from '@/app/components/FreefallSection'
 import { BeachLanding } from '@/app/components/BeachLanding'
 import { DropNoteModal } from '@/app/components/DropNoteModal'
 import { PrimaryCTAButton } from '@/app/components/PrimaryCTAButton'
+import { SkyCanvas } from '@/app/components/SkyCanvas'
 import { CHAPTERS, getChapterForProgress } from '@/constants/chapters'
 import { NOTE_PADDING } from '@/constants/zones'
 
@@ -80,8 +81,12 @@ export function StoryModeRoot({ onActiveChapterChange }: StoryModeRootProps) {
     <div ref={scrollRef} className="relative h-[800vh] bg-background">
       {/* Global story viewport */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">
+        <SkyCanvas scrollYProgress={scrollYProgress} />
         {/* Cargo Hold / Doors / Freefall are handled inside these components based on progress */}
-        <CargoHold scrollYProgress={scrollYProgress} onJump={handleJumpToFreefall} />
+        <CargoHold
+          scrollYProgress={scrollYProgress}
+          onJump={handleJumpToFreefall}
+        />
         <FreefallSection
           scrollYProgress={scrollYProgress}
           projects={freefallProjects}
@@ -116,4 +121,3 @@ export function StoryModeRoot({ onActiveChapterChange }: StoryModeRootProps) {
     </div>
   )
 }
-
