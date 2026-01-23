@@ -6,12 +6,12 @@ interface SkyCanvasProps {
 }
 
 const EXPERIENCE = CHAPTERS.find((c) => c.id === 'experience')!
-const BEACH = CHAPTERS.find((c) => c.id === 'beach')!
+const LANDING = CHAPTERS.find((c) => c.id === 'landing')!
 
 export function SkyCanvas({ scrollYProgress }: SkyCanvasProps) {
   const skyProgress = useTransform(
     scrollYProgress,
-    [EXPERIENCE.start, BEACH.end],
+    [EXPERIENCE.start, LANDING.end],
     [0, 1],
   )
 
@@ -31,21 +31,21 @@ export function SkyCanvas({ scrollYProgress }: SkyCanvasProps) {
 
       {/* Far clouds */}
       <motion.div
-        className="absolute left-[-20%] top-[15%] h-24 w-64 rounded-full bg-white/70 blur-sm"
+        className="absolute left-[-25%] top-[15%] h-40 w-96 rounded-full bg-white/70 blur-sm"
         style={{ x: cloudFarX }}
       />
       <motion.div
-        className="absolute right-[-30%] top-[35%] h-16 w-40 rounded-full bg-white/70 blur-sm"
+        className="absolute right-[-30%] top-[35%] h-28 w-72 rounded-full bg-white/70 blur-sm"
         style={{ x: cloudFarX }}
       />
 
       {/* Near clouds */}
       <motion.div
-        className="absolute left-[-10%] top-[55%] h-28 w-72 rounded-full bg-white/90 blur-[2px]"
+        className="absolute left-[-15%] top-[55%] h-40 w-[28rem] rounded-full bg-white/90 blur-[2px]"
         style={{ x: cloudNearX }}
       />
       <motion.div
-        className="absolute right-[-15%] top-[10%] h-20 w-52 rounded-full bg-white/90 blur-[2px]"
+        className="absolute right-[-20%] top-[8%] h-32 w-[22rem] rounded-full bg-white/90 blur-[2px]"
         style={{ x: cloudNearX }}
       />
 
@@ -62,4 +62,3 @@ export function SkyCanvas({ scrollYProgress }: SkyCanvasProps) {
     </div>
   )
 }
-

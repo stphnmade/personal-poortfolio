@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { SUBSTANCE } from '@/constants/substance';
 
 interface DropNoteModalProps {
   isOpen: boolean;
@@ -9,6 +10,7 @@ interface DropNoteModalProps {
 export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps) {
   const [message, setMessage] = useState('');
   const [author, setAuthor] = useState('');
+  const copy = SUBSTANCE.story.globalUI.noteDrop;
 
   if (!isOpen) return null;
 
@@ -32,12 +34,15 @@ export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps)
       
       {/* Modal */}
       <div className="modal-content relative bg-card rounded-lg shadow-2xl p-8 max-w-md w-full mx-4 border border-border">
-        <h2 className="modal-title text-h2-sans mb-6">Drop a Note</h2>
+        <h2 className="modal-title text-h2-sans mb-1">{copy.modalTitle}</h2>
+        <p className="text-body-sans mb-5 text-muted-foreground">
+          {copy.modalSubtitle}
+        </p>
         
         <form onSubmit={handleSubmit} className="modal-form space-y-4">
           <div className="form-group">
             <label htmlFor="message" className="form-label block mb-2">
-              Your Message
+              {copy.fields.messageLabel}
             </label>
             <textarea
               id="message"
@@ -45,14 +50,14 @@ export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps)
               onChange={(e) => setMessage(e.target.value)}
               className="form-input-message w-full p-3 rounded-md border border-border bg-input-background resize-none text-annotation-script"
               rows={4}
-              placeholder="Write your note here..."
+              placeholder={copy.fields.placeholderMessage}
               required
             />
           </div>
           
           <div className="form-group">
             <label htmlFor="author" className="form-label block mb-2">
-              Your Name (optional)
+              {copy.fields.authorLabel}
             </label>
             <input
               id="author"
@@ -60,7 +65,7 @@ export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps)
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
               className="form-input-author w-full p-3 rounded-md border border-border bg-input-background text-annotation-script"
-              placeholder="Anonymous"
+              placeholder={copy.fields.placeholderAuthor}
             />
           </div>
           
@@ -76,7 +81,7 @@ export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps)
               type="submit"
               className="cta-modal-submit flex-1 px-4 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              <span className="text-body-sans">Drop Note</span>
+              <span className="text-body-sans">{copy.submit}</span>
             </button>
           </div>
         </form>

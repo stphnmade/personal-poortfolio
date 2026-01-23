@@ -1,5 +1,6 @@
 import { motion } from 'motion/react'
 import { CHAPTERS, type ChapterId } from '@/constants/chapters'
+import { SUBSTANCE } from '@/constants/substance'
 
 interface NavigationSliderProps {
   mode: 'story' | 'recruiter'
@@ -49,12 +50,16 @@ export function NavigationSlider({ mode, activeChapterId }: NavigationSliderProp
         {/* Top / bottom labels only */}
         <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 text-center">
           <span className="uppercase tracking-[0.2em]">
-            {CHAPTERS[0]?.label}
+            {mode === 'story'
+              ? SUBSTANCE.chapters[0]?.storyLabel
+              : SUBSTANCE.chapters[0]?.recruiterLabel}
           </span>
         </div>
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-center">
           <span className="uppercase tracking-[0.2em]">
-            {CHAPTERS[CHAPTERS.length - 1]?.label}
+            {mode === 'story'
+              ? SUBSTANCE.chapters[SUBSTANCE.chapters.length - 1]?.storyLabel
+              : SUBSTANCE.chapters[SUBSTANCE.chapters.length - 1]?.recruiterLabel}
           </span>
         </div>
 

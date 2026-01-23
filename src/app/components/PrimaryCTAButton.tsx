@@ -22,7 +22,9 @@ export function PrimaryCTAButton({ children, onClick, variant = 'primary', ctaId
       `}
       data-cta-id={buttonId}
     >
-      <span className="text-body-sans">{children}</span>
+      <span className="text-body-sans inline-flex items-center gap-2">
+        {children}
+      </span>
     </button>
   );
 }

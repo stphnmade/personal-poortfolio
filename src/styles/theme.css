@@ -2,22 +2,23 @@
 
 :root {
   --font-size: 16px;
-  --background: #ffffff;
-  --foreground: oklch(0.145 0 0);
+  /* Palette: https://coolors.co/f5f5f5-3b413c-59a96a-f19a3e-dd403a */
+  --background: #f5f5f5;
+  --foreground: #3b413c;
   --card: #ffffff;
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: #030213;
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.95 0.0058 264.53);
-  --secondary-foreground: #030213;
-  --muted: #ececf0;
+  --card-foreground: #3b413c;
+  --popover: #ffffff;
+  --popover-foreground: #3b413c;
+  --primary: #59a96a;
+  --primary-foreground: #f5f5f5;
+  --secondary: #f19a3e;
+  --secondary-foreground: #3b413c;
+  --muted: #e0e0e0;
   --muted-foreground: #717182;
-  --accent: #e9ebef;
-  --accent-foreground: #030213;
-  --destructive: #d4183d;
-  --destructive-foreground: #ffffff;
+  --accent: #3b413c;
+  --accent-foreground: #f5f5f5;
+  --destructive: #dd403a;
+  --destructive-foreground: #f5f5f5;
   --border: rgba(0, 0, 0, 0.1);
   --input: transparent;
   --input-background: #f3f3f5;
@@ -33,7 +34,7 @@
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: #030213;
+  --sidebar-primary: #3b413c;
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
@@ -42,7 +43,8 @@
   
   /* Typography Tokens */
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  --font-script: 'Pinyon Script', cursive, system-ui;
+  /* Use Trirong for annotation / script text to keep notes readable. */
+  --font-script: 'Trirong', system-ui, -apple-system, serif;
   
   /* H1 / Sans */
   --text-h1-font: var(--font-sans);
