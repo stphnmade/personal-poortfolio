@@ -294,15 +294,15 @@ export const SUBSTANCE = {
   projects: [
     {
       id: "blockopoly",
-      name: "Blockopoly",
+      name: "Blockopoly, Online Multiplayer Digital Card Game",
       timeframe: "Jun 2025 to Present",
       tagline:
-        "Real-time multiplayer digital card game inspired by Monopoly Deal.",
+        "Online multiplayer card game with stable reconnects and synchronized state.",
       impactBullets: [
-        "Architected a full-stack multiplayer system with concurrent sessions and real-time updates.",
-        "Built a Kotlin and Ktor backend with Redis for ephemeral state and pub or sub messaging.",
-        "Implemented Server-Sent Events for low-latency updates without client polling.",
-        "Built a responsive React and TypeScript frontend with animated card interactions and drag-and-drop mechanics.",
+        "Real-time multiplayer web games often break on refresh and struggle with low-latency synchronization across players.",
+        "Architect a production-ready system supporting rooms, reconnects, and synchronized turn-based state.",
+        "Designed a Ktor backend with Redis for ephemeral state and pub/sub, and shipped real-time updates via Server-Sent Events (SSE) while building a drag-and-drop React and TypeScript UI.",
+        "Eliminated polling latency, improved session stability across reloads, and established a scalable blueprint for turn-based multiplayer experiences.",
       ],
       stack: [
         "React",
@@ -312,7 +312,6 @@ export const SUBSTANCE = {
         "Redis",
         "Docker",
         "AWS",
-        "SSE",
       ],
       links: [
         {
@@ -325,27 +324,85 @@ export const SUBSTANCE = {
     },
     {
       id: "curide",
-      name: "CURide",
+      name: "CURide, Community Ridesharing Platform",
       timeframe: "Oct 2024 to Dec 2024",
       tagline:
-        "A Cornell-focused ridesharing product, designed end to end with UX research.",
+        "Community ridesharing platform addressing affordability and safety gaps in student transportation.",
       impactBullets: [
-        "Designed and prototyped a ridesharing app to improve affordability and sustainability, projecting a potential 25% reduction in solo trips.",
-        "Created low fidelity wireframes in Balsamiq and high fidelity prototypes in Figma, improved task completion rate by 33% after usability tests.",
-        "Implemented UX enhancements aligned with Nielsen heuristics and Gestalt principles, reducing navigation errors by 40%.",
+        "Addressed affordability and safety gaps in student transportation at Cornell by designing a ridesharing platform tailored to campus needs.",
+        "Led a user-centered redesign after interviewing 12 students to uncover trust, role clarity, and scheduling pain points.",
+        "Translated interview insights into low-fidelity Balsamiq wireframes and high-fidelity Figma prototypes, iterating across multiple usability cycles.",
+        "Improved task completion by 33% and reduced navigation errors by 40%, with instructors projecting a 25% reduction in solo car trips if deployed.",
       ],
       stack: ["Figma", "Balsamiq", "UX Research", "Agile", "Google Sheets"],
+    },
+    {
+      id: "crossing-cafe",
+      name: "Crossing Cafe, Full-Stack Restaurant Website",
+      timeframe: "Mar 2024 to May 2024",
+      tagline:
+        "Responsive restaurant website grounded in stakeholder workflows and persistent ordering data.",
+      impactBullets: [
+        "A local cafe lacked a modern web presence for menu discovery and order clarity, increasing in-store friction during rush periods.",
+        "Partnered with a four-person team to deliver a responsive website grounded in stakeholder requirements and customer workflows.",
+        "Conducted structured interviews with owners and customers, converted findings into user stories, and implemented persistent menu and order tracking using SQLite.",
+        "Delivered an MVP that centralized menu updates, reduced ordering confusion, and demonstrated a scalable data-backed ordering workflow.",
+      ],
+      stack: ["HTML", "CSS", "JavaScript", "SQLite", "UX Interviews"],
+    },
+    {
+      id: "wishlist",
+      name: "Wishlist, Collaborative Gifting Platform",
+      timeframe: "Jan 2025 to Present",
+      tagline:
+        "Full-stack wishlist platform for transparent, trackable group gifting.",
+      impactBullets: [
+        "Group gifting coordination lacked transparency, progress tracking, and shared context across friends and families.",
+        "Build a full-stack wishlist product enabling users to create, share, and track gifting progress with social signals.",
+        "Implemented a service-oriented Go and gRPC backend with PostgreSQL, structured modular React components, and Dockerized services for local-to-cloud parity.",
+        "Delivered a maintainable architecture enabling rapid iteration on features like gifting history, friend sorting, and progress-based goals.",
+      ],
+      stack: ["React", "Go", "gRPC", "PostgreSQL", "Docker"],
+    },
+    {
+      id: "dear-days",
+      name: "Dear Days, Family Event and Birthday Calendar",
+      timeframe: "Jul 2025 to Present",
+      tagline:
+        "Shared calendar for birthdays and special events across families.",
+      impactBullets: [
+        "Families and groups frequently miss birthdays and special events due to fragmented calendars and weak reminder workflows.",
+        "Design a centralized, emotionally engaging system to track special days with simple sharing and clean data models.",
+        "Built a Next.js application with Prisma ORM, Google OAuth, and Bento-grid dashboards, using interviews with families to refine onboarding and event entry flows.",
+        "Created a scalable product foundation with retention hooks and normalized schemas that support expansion to multi-family use.",
+      ],
+      stack: ["Next.js", "Prisma", "Tailwind", "Google OAuth"],
+    },
+    {
+      id: "storybot",
+      name: "Storybot, Reddit-to-Video Automation Platform",
+      timeframe: "Jul 2025 to Present",
+      tagline:
+        "Automation pipeline that converts text stories into captioned short-form videos.",
+      impactBullets: [
+        "Short-form creators face high friction converting text stories into captioned videos with consistent pacing and narration quality.",
+        "Automate scraping, cleaning, narration, captioning, and audio-video composition into a repeatable pipeline.",
+        "Built a Node and Python workflow using FFmpeg and gTTS, defining modular steps for story ingestion, caption overlay, background selection, and batch processing.",
+        "Reduced production time from over 20 minutes to under 2 minutes per video while maintaining caption alignment and audio clarity.",
+      ],
+      stack: ["Node.js", "Python", "FFmpeg", "gTTS", "Express"],
     },
     {
       id: "nba-shot-trends",
       name: "NBA Shot Trends Analysis, 3D Court Visualization",
       timeframe: "Feb 2025 to May 2025",
       tagline:
-        "3D visualization and analysis of 300k+ NBA shots from 2003 to 2023.",
+        "3D visualization and analysis of how NBA shot selection shifted across the modern era.",
       impactBullets: [
-        "Analyzed 300k+ shot records to identify spatial and temporal trends in shot selection.",
-        "Engineered new field goal metrics and mapped loc_x and loc_y coordinates to court zones with tidyverse.",
-        "Delivered a reproducible GitHub workflow and a reviewed report and presentation communicating key findings.",
+        "Coaches and fans lacked a clear, visual narrative for how shot selection shifted across the modern NBA era.",
+        "Analyzed more than 300,000 NBA shots from 2003 to 2023 to identify spatial and temporal trends, including player-specific comparisons.",
+        "Cleaned and engineered high-volume data using tidyverse, mapped loc_x and loc_y to court zones, and generated 3D visual outputs in Quarto.",
+        "Produced an instructor-reviewed report and reproducible workflow highlighting measurable increases in three-point dependency over time.",
       ],
       stack: ["R", "tidyverse", "ggplot2", "Quarto", "GitHub"],
     },
