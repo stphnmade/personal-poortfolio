@@ -118,13 +118,29 @@ export function FreefallSection({
     }
   });
 
+
   return (
     // Absolute full-screen layer that sits between the cargo doors and the beach.
-    <div className="pointer-events-none absolute inset-0 z-10 overflow-visible">
+    <div className="pointer-events-none absolute inset-0 overflow-visible">
+      {/* Animated sky background, fades in/out over the cargo hold as you enter freefall */}
+      <motion.div className="sky-scene" style={{ opacity: freefallOpacity }}>
+        <div className="cloud c1" />
+        <div className="cloud c2" />
+        <div className="cloud c3" />
+        <div className="bird" />
+        <div className="skydiver-container">
+          <div className="drogue-chute" />
+          <div className="person-group">
+            <div className="head" />
+            <div className="body-suit" />
+          </div>
+        </div>
+      </motion.div>
+
       {/* Sticky scene so content stays in view while scrolling the freefall range */}
       <motion.div
         style={{ opacity: freefallOpacity }}
-        className="pointer-events-auto sticky top-0 flex h-screen w-full flex-col items-center justify-center gap-8 px-4"
+        className="pointer-events-auto sticky top-0 z-10 flex h-screen w-full flex-col items-center justify-center gap-8 px-4"
       >
         {/* Freefall heading */}
         <div className="rounded-full bg-white/85 px-4 py-2 shadow-sm backdrop-blur">
@@ -132,23 +148,6 @@ export function FreefallSection({
             {SUBSTANCE.story.freefall.subheadline}
           </span>
         </div>
-
-        {/* Skydiver anchor */}
-        <motion.div
-          layoutId="parachute"
-          className="flex flex-col items-center"
-          style={{
-            rotateX,
-            rotateY,
-          }}
-        >
-          <div className="flex h-32 w-32 items-center justify-center rounded-full bg-[#3B413C] text-center text-sm font-medium text-white shadow-2xl">
-            ME
-          </div>
-          <p className="text-annotation-script mt-4 text-center text-[#DD403A]">
-            Hoping that everything falls into place...
-          </p>
-        </motion.div>
 
         {/* EXPERIENCE / SKILLS / PROJECTS content window */}
         <motion.div
@@ -319,6 +318,33 @@ function ProjectsPanel({ projects }: { projects: typeof SUBSTANCE.projects }) {
           </p>
           <p className="text-sm text-[#4B5563] mt-1">{current.tagline}</p>
         </div>
+        {current.media && current.media.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-3">
+            {current.media.map((media) =>
+              media.kind === "image" ? (
+                <img
+                  key={media.src}
+                  src={media.src}
+                  alt={media.alt}
+                  className="h-32 w-auto rounded-lg border border-[#E5E7EB] object-cover shadow-sm"
+                />
+              ) : (
+                <div
+                  key={media.embedUrl}
+                  className="aspect-video w-full max-w-md overflow-hidden rounded-lg border border-[#E5E7EB] shadow-sm"
+                >
+                  <iframe
+                    src={media.embedUrl}
+                    title={media.title || current.name}
+                    className="h-full w-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              ),
+            )}
+          </div>
+        )}
         {current.links && current.links.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-3 text-sm">
             {current.links.map((link) => (

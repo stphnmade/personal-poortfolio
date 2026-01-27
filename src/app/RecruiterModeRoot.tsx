@@ -93,10 +93,12 @@ export function RecruiterModeRoot() {
             {hero.subheadline}
           </p>
           <div className="mt-6 flex flex-wrap gap-4">
-            <PrimaryCTAButton ctaId="cta-download-resume-recruiter">
-              <FaFilePdf />
-              {links.resume.label}
-            </PrimaryCTAButton>
+            <a href={links.resume.href} download>
+              <PrimaryCTAButton ctaId="cta-download-resume-recruiter">
+                <FaFilePdf />
+                {links.resume.label}
+              </PrimaryCTAButton>
+            </a>
             <PrimaryCTAButton ctaId="cta-github" variant="secondary">
               <FaGithub />
               {links.github.label}
@@ -153,6 +155,33 @@ export function RecruiterModeRoot() {
                 <p className="text-body-sans text-muted-foreground">
                   {project.tagline}
                 </p>
+                {project.media && project.media.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-3">
+                    {project.media.map((media) =>
+                      media.kind === "image" ? (
+                        <img
+                          key={media.src}
+                          src={media.src}
+                          alt={media.alt}
+                          className="h-32 w-auto rounded-lg border border-border object-cover shadow-sm"
+                        />
+                      ) : (
+                        <div
+                          key={media.embedUrl}
+                          className="aspect-video w-full max-w-md overflow-hidden rounded-lg border border-border shadow-sm"
+                        >
+                          <iframe
+                            src={media.embedUrl}
+                            title={media.title || project.name}
+                            className="h-full w-full"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          />
+                        </div>
+                      ),
+                    )}
+                  </div>
+                )}
                 <ul className="mt-2 list-disc pl-5 text-sm text-muted-foreground">
                   {project.impactBullets
                     .slice(
@@ -285,10 +314,12 @@ export function RecruiterModeRoot() {
             {SUBSTANCE.meta.email} · {SUBSTANCE.meta.location}
           </p>
           <div className="flex flex-wrap gap-4">
-            <PrimaryCTAButton ctaId="cta-download-resume-bottom">
-              <FaFilePdf />
-              {links.resume.label}
-            </PrimaryCTAButton>
+            <a href={links.resume.href} download>
+              <PrimaryCTAButton ctaId="cta-download-resume-bottom">
+                <FaFilePdf />
+                {links.resume.label}
+              </PrimaryCTAButton>
+            </a>
             <PrimaryCTAButton ctaId="cta-email" variant="secondary">
               <FaEnvelope />
               Email Me

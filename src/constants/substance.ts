@@ -6,6 +6,8 @@
 // - Recruiter Mode: direct, scannable, metrics forward.
 // - Avoid em dashes. Use commas or parentheses only when needed.
 
+import resumePdf from "@/app/assets/Stephen_Syl_Akinwale_Resume.pdf";
+
 export type Link = {
   label: string;
   href: string;
@@ -25,6 +27,18 @@ export type ExperienceItem = {
   links?: Link[];
 };
 
+export type ProjectMedia =
+  | {
+      kind: "image";
+      src: string;
+      alt: string;
+    }
+  | {
+      kind: "video";
+      embedUrl: string;
+      title?: string;
+    };
+
 export type ProjectItem = {
   id: string;
   name: string;
@@ -33,6 +47,8 @@ export type ProjectItem = {
   impactBullets: string[];
   stack: string[];
   links?: Link[];
+   // Optional rich media to showcase this project (images, videos).
+  media?: ProjectMedia[];
 };
 
 export type SkillGroup = {
@@ -81,16 +97,29 @@ export const SUBSTANCE = {
       },
       linkedin: {
         label: "LinkedIn",
-        href: "https://linkedin.com/in/stephen-syl-akinwale",
+        href: "https://www.linkedin.com/in/stephen-syl-akinwale/",
         external: true,
       },
-      // Agent: add resume pdf link when file exists in repo or hosted.
+      blockopoly: {
+        label: "Play Blockopoly",
+        href: "https://playblockopoly.com",
+        external: true,
+      },
+      // Resume is bundled as a static asset via Vite.
       resume: {
         label: "Download Resume",
-        href: "/Stephen_Syl-Akinwale_Resume.pdf",
+        href: resumePdf,
         external: false,
       },
     } satisfies Record<string, Link>,
+    badges: [
+      {
+        id: "project_management",
+        label: "Project Management Badge",
+        provider: "Credly",
+        embedHtml: `<div data-iframe-width="150" data-iframe-height="270" data-share-badge-id="5d0a90ec-9f5f-47c7-8721-fe32fedd7488" data-share-badge-host="https://www.credly.com"></div><script type="text/javascript" async src="//cdn.credly.com/assets/utilities/embed.js"></script>`,
+      },
+    ],
   },
 
   chapters: [
