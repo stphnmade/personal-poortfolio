@@ -1,0 +1,31 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Dear Days shared calendar board</title>
+  <desc id="desc">Shared family event calendar with highlighted moments.</desc>
+  <rect width="1200" height="675" fill="#101922"/>
+  <rect x="88" y="60" width="1024" height="555" rx="26" fill="#1A2936" stroke="#324A5F" stroke-width="2"/>
+
+  <rect x="146" y="118" width="908" height="74" rx="14" fill="#EFF4FA"/>
+  <rect x="146" y="214" width="908" height="344" rx="14" fill="#EFF4FA"/>
+
+  <rect x="186" y="144" width="260" height="22" rx="6" fill="#D8E3EF"/>
+  <rect x="776" y="140" width="236" height="30" rx="10" fill="#59A96A"/>
+
+  <rect x="186" y="248" width="120" height="78" rx="10" fill="#DFE8F3"/>
+  <rect x="324" y="248" width="120" height="78" rx="10" fill="#DFE8F3"/>
+  <rect x="462" y="248" width="120" height="78" rx="10" fill="#CFE3D2"/>
+  <rect x="600" y="248" width="120" height="78" rx="10" fill="#DFE8F3"/>
+  <rect x="738" y="248" width="120" height="78" rx="10" fill="#DFE8F3"/>
+  <rect x="876" y="248" width="120" height="78" rx="10" fill="#F7E0CC"/>
+
+  <rect x="186" y="342" width="120" height="78" rx="10" fill="#DFE8F3"/>
+  <rect x="324" y="342" width="120" height="78" rx="10" fill="#EFD8DF"/>
+  <rect x="462" y="342" width="120" height="78" rx="10" fill="#DFE8F3"/>
+  <rect x="600" y="342" width="120" height="78" rx="10" fill="#DFE8F3"/>
+  <rect x="738" y="342" width="120" height="78" rx="10" fill="#DFE8F3"/>
+  <rect x="876" y="342" width="120" height="78" rx="10" fill="#DFE8F3"/>
+
+  <rect x="186" y="436" width="810" height="86" rx="12" fill="#E2EAF4"/>
+
+  <text x="146" y="94" fill="#ECF2F6" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="28" font-weight="700">Dear Days</text>
+  <text x="146" y="116" fill="#9FB0BF" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="16">Family events, birthdays, and memory moments</text>
+</svg>

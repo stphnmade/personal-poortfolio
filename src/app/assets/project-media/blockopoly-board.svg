@@ -1,0 +1,26 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Blockopoly gameplay board</title>
+  <desc id="desc">Stylized multiplayer board with player lanes and card stacks.</desc>
+  <rect width="1200" height="675" fill="#101923"/>
+  <rect x="70" y="72" width="1060" height="531" rx="26" fill="#162430" stroke="#2B3C4C" stroke-width="2"/>
+  <rect x="106" y="110" width="988" height="455" rx="18" fill="#0F1519" stroke="#314859" stroke-width="2"/>
+
+  <rect x="145" y="148" width="430" height="84" rx="12" fill="#59A96A" fill-opacity="0.2"/>
+  <rect x="145" y="248" width="430" height="84" rx="12" fill="#F19A3E" fill-opacity="0.2"/>
+  <rect x="145" y="348" width="430" height="84" rx="12" fill="#DD403A" fill-opacity="0.2"/>
+  <rect x="145" y="448" width="430" height="84" rx="12" fill="#4A90E2" fill-opacity="0.22"/>
+
+  <rect x="630" y="148" width="122" height="172" rx="10" fill="#F5F5F5"/>
+  <rect x="775" y="148" width="122" height="172" rx="10" fill="#F5F5F5"/>
+  <rect x="920" y="148" width="122" height="172" rx="10" fill="#F5F5F5"/>
+
+  <rect x="630" y="350" width="412" height="182" rx="14" fill="#1A2834" stroke="#36556B" stroke-width="2"/>
+  <circle cx="686" cy="441" r="24" fill="#59A96A"/>
+  <circle cx="760" cy="441" r="24" fill="#F19A3E"/>
+  <circle cx="834" cy="441" r="24" fill="#DD403A"/>
+  <circle cx="908" cy="441" r="24" fill="#4A90E2"/>
+  <rect x="958" y="420" width="60" height="42" rx="8" fill="#59A96A"/>
+
+  <text x="145" y="62" fill="#EAF0F3" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="28" font-weight="700">Blockopoly</text>
+  <text x="145" y="94" fill="#97A6B2" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="16">Real-time multiplayer room state and card interactions</text>
+</svg>

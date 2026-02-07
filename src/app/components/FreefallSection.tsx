@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
+  AnimatePresence,
   motion,
   useTransform,
   useMotionValueEvent,
@@ -9,15 +10,44 @@ import {
   FaBriefcase,
   FaTools,
   FaProjectDiagram,
-  FaMapMarkerAlt,
   FaCalendarAlt,
   FaCode,
   FaDatabase,
   FaGithub,
   FaExternalLinkAlt,
   FaAward,
+  FaGlobe,
+  FaWindows,
 } from "react-icons/fa";
-import { SiPython, SiR } from "react-icons/si";
+import {
+  SiAmazonwebservices,
+  SiCss3,
+  SiDocker,
+  SiExpress,
+  SiFfmpeg,
+  SiFigma,
+  SiGit,
+  SiGithub,
+  SiGo,
+  SiGoogle,
+  SiGooglesheets,
+  SiHtml5,
+  SiJavascript,
+  SiKotlin,
+  SiNextdotjs,
+  SiNodedotjs,
+  SiPostgresql,
+  SiPrisma,
+  SiPython,
+  SiQuarto,
+  SiR,
+  SiReact,
+  SiRedis,
+  SiSalesforce,
+  SiSqlite,
+  SiTailwindcss,
+  SiTypescript,
+} from "react-icons/si";
 import { CHAPTERS } from "@/constants/chapters";
 import { SUBSTANCE } from "@/constants/substance";
 
@@ -31,15 +61,6 @@ interface FreefallSectionProps {
   onOpenNote: () => void;
 }
 
-interface FreefallProjectBillboardProps {
-  project: {
-    id: string;
-    title: string;
-    description: string;
-  };
-  index: number;
-}
-
 interface FallingObjectProps {
   id: string;
   content: string;
@@ -51,39 +72,131 @@ const TOOLS = CHAPTERS.find((c) => c.id === "tools")!;
 const FREEFALL_START_PROGRESS = EXPERIENCE.start;
 const FREEFALL_END_PROGRESS = TOOLS.end;
 
+function getStatusToneClasses(
+  tone: (typeof SUBSTANCE.projects)[number]["status"]["tone"],
+) {
+  switch (tone) {
+    case "live":
+      return "border-[#59A96A]/30 bg-[#59A96A]/15 text-[#2f7340]";
+    case "building":
+      return "border-[#F19A3E]/30 bg-[#F19A3E]/15 text-[#93581a]";
+    case "private":
+      return "border-[#3B413C]/30 bg-[#3B413C]/10 text-[#3B413C]";
+    case "archived":
+      return "border-[#6B7280]/30 bg-[#6B7280]/15 text-[#4B5563]";
+    case "completed":
+    default:
+      return "border-[#0F5EAF]/30 bg-[#0F5EAF]/10 text-[#0F5EAF]";
+  }
+}
+
+function renderTechIcon(label: string, sizeClass = "h-3.5 w-3.5") {
+  const lower = label.toLowerCase();
+
+  if (lower.includes("microsoft")) {
+    return <FaWindows className={`${sizeClass} text-[#00A4EF]`} />;
+  }
+  if (lower.includes("react native")) {
+    return <SiReact className={`${sizeClass} text-[#61DAFB]`} />;
+  }
+  if (lower === "react") {
+    return <SiReact className={`${sizeClass} text-[#61DAFB]`} />;
+  }
+  if (lower.includes("typescript")) {
+    return <SiTypescript className={`${sizeClass} text-[#3178C6]`} />;
+  }
+  if (lower.includes("javascript")) {
+    return <SiJavascript className={`${sizeClass} text-[#F7DF1E]`} />;
+  }
+  if (lower.includes("python")) {
+    return <SiPython className={`${sizeClass} text-[#3776AB]`} />;
+  }
+  if (lower === "r" || lower.startsWith("r ")) {
+    return <SiR className={`${sizeClass} text-[#276DC3]`} />;
+  }
+  if (lower.includes("kotlin")) {
+    return <SiKotlin className={`${sizeClass} text-[#A97BFF]`} />;
+  }
+  if (lower.includes("go")) {
+    return <SiGo className={`${sizeClass} text-[#00ADD8]`} />;
+  }
+  if (lower.includes("node")) {
+    return <SiNodedotjs className={`${sizeClass} text-[#339933]`} />;
+  }
+  if (lower.includes("express")) {
+    return <SiExpress className={`${sizeClass} text-[#3B413C]`} />;
+  }
+  if (lower.includes("html")) {
+    return <SiHtml5 className={`${sizeClass} text-[#E34F26]`} />;
+  }
+  if (lower.includes("css")) {
+    return <SiCss3 className={`${sizeClass} text-[#1572B6]`} />;
+  }
+  if (lower.includes("tailwind")) {
+    return <SiTailwindcss className={`${sizeClass} text-[#06B6D4]`} />;
+  }
+  if (lower.includes("next.js") || lower === "nextjs") {
+    return <SiNextdotjs className={`${sizeClass} text-[#111827]`} />;
+  }
+  if (lower.includes("prisma")) {
+    return <SiPrisma className={`${sizeClass} text-[#111827]`} />;
+  }
+  if (lower.includes("redis")) {
+    return <SiRedis className={`${sizeClass} text-[#DC382D]`} />;
+  }
+  if (lower.includes("postgres")) {
+    return <SiPostgresql className={`${sizeClass} text-[#336791]`} />;
+  }
+  if (lower.includes("sqlite")) {
+    return <SiSqlite className={`${sizeClass} text-[#003B57]`} />;
+  }
+  if (lower.includes("docker")) {
+    return <SiDocker className={`${sizeClass} text-[#2496ED]`} />;
+  }
+  if (lower.includes("aws")) {
+    return <SiAmazonwebservices className={`${sizeClass} text-[#FF9900]`} />;
+  }
+  if (lower.includes("figma")) {
+    return <SiFigma className={`${sizeClass} text-[#F24E1E]`} />;
+  }
+  if (lower.includes("balsamiq")) {
+    return <FaTools className={`${sizeClass} text-[#CC0000]`} />;
+  }
+  if (lower.includes("google sheets")) {
+    return <SiGooglesheets className={`${sizeClass} text-[#34A853]`} />;
+  }
+  if (lower.includes("google")) {
+    return <SiGoogle className={`${sizeClass} text-[#4285F4]`} />;
+  }
+  if (lower.includes("salesforce")) {
+    return <SiSalesforce className={`${sizeClass} text-[#00A1E0]`} />;
+  }
+  if (lower.includes("github")) {
+    return <SiGithub className={`${sizeClass} text-[#111827]`} />;
+  }
+  if (lower.includes("git")) {
+    return <SiGit className={`${sizeClass} text-[#F05032]`} />;
+  }
+  if (lower.includes("ffmpeg")) {
+    return <SiFfmpeg className={`${sizeClass} text-[#007808]`} />;
+  }
+  if (lower.includes("quarto")) {
+    return <SiQuarto className={`${sizeClass} text-[#39729E]`} />;
+  }
+
+  return <FaTools className={`${sizeClass} text-[#59A96A]`} />;
+}
+
 export function FreefallSection({
   scrollYProgress,
   userNotes,
-  onOpenNote,
+  onOpenNote: _onOpenNote,
 }: FreefallSectionProps) {
   const freefallProgress = useTransform(
     scrollYProgress,
     [FREEFALL_START_PROGRESS, FREEFALL_END_PROGRESS],
     [0, 1],
   );
-
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [viewport, setViewport] = useState({ width: 0, height: 0 });
-
-  useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      setMousePos({ x: event.clientX, y: event.clientY });
-    };
-    const handleResize = () => {
-      setViewport({ width: window.innerWidth, height: window.innerHeight });
-    };
-
-    handleResize();
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  const rotateX = (mousePos.y - viewport.height / 2 || 0) * 0.05;
-  const rotateY = (mousePos.x - viewport.width / 2 || 0) * -0.05;
 
   const experienceItems = SUBSTANCE.experience;
   const skillGroups = SUBSTANCE.skillsAndCerts;
@@ -182,25 +295,6 @@ export function FreefallSection({
   );
 }
 
-function FreefallProjectBillboard({
-  project,
-  index,
-}: FreefallProjectBillboardProps) {
-  return (
-    <motion.div
-      layoutId={`project-${project.id}`}
-      className={`rounded-xl border border-[#3B413C]/20 bg-white/90 p-4 shadow-md ${
-        index === 0 ? "" : "mt-3"
-      }`}
-    >
-      <h2 className="text-h2-sans font-bold text-[#3B413C]">{project.title}</h2>
-      <p className="text-body-sans mt-2 text-[#3B413C]/80">
-        {project.description}
-      </p>
-    </motion.div>
-  );
-}
-
 function SkillsPanel({ skills }: { skills: typeof SUBSTANCE.skillsAndCerts }) {
   const [index, setIndex] = useState(0);
   const total = skills.length;
@@ -224,16 +318,13 @@ function SkillsPanel({ skills }: { skills: typeof SUBSTANCE.skillsAndCerts }) {
 
   const renderSkillIcon = (label: string) => {
     const lower = label.toLowerCase();
-    if (lower.includes("python")) {
-      return <SiPython className="h-3.5 w-3.5 text-[#59A96A]" />;
-    }
-    if (lower === "r" || lower.startsWith("r ")) {
-      return <SiR className="h-3.5 w-3.5 text-[#3B413C]" />;
-    }
     if (lower.includes("sql")) {
       return <FaDatabase className="h-3.5 w-3.5 text-[#F19A3E]" />;
     }
-    return <FaAward className="h-3.5 w-3.5 text-[#59A96A]" />;
+    if (lower.includes("cert") || lower.includes("workflow")) {
+      return <FaAward className="h-3.5 w-3.5 text-[#59A96A]" />;
+    }
+    return renderTechIcon(label);
   };
 
   return (
@@ -248,26 +339,37 @@ function SkillsPanel({ skills }: { skills: typeof SUBSTANCE.skillsAndCerts }) {
         <h2 className="text-h2-sans text-[#111827]">
           {SUBSTANCE.story.freefall.skillsIntro}
         </h2>
-        <p className="mt-2 text-sm font-semibold text-[#111827]">
-          {current.title}
-        </p>
-        <ul className="mt-3 flex flex-wrap gap-2 text-sm text-[#4B5563]">
-          {current.items.map((item) => (
-            <li
-              key={item}
-              className="inline-flex items-center gap-1 rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-1"
-            >
-              {renderSkillIcon(item)}
-              {item}
-            </li>
-          ))}
-        </ul>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={current.id}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            <p className="mt-2 text-sm font-semibold text-[#111827]">
+              {current.title}
+            </p>
+            <ul className="mt-3 flex flex-wrap gap-2 text-sm text-[#4B5563]">
+              {current.items.map((item) => (
+                <li
+                  key={item}
+                  className="inline-flex items-center gap-1 rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-1"
+                >
+                  {renderSkillIcon(item)}
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </AnimatePresence>
       </div>
       <div className="ml-4 flex w-20 flex-col items-center justify-center gap-2 text-xs text-[#4B5563]">
         <button
           onClick={goPrev}
           type="button"
-          className="rounded-full bg-[#F5F5F5] px-3 py-1 hover:bg-[#E5E7EB]"
+          aria-label="Previous skills group"
+          className="rounded-full bg-[#F5F5F5] px-3 py-1 transition-colors duration-200 hover:bg-[#E5E7EB]"
         >
           ◀
         </button>
@@ -277,7 +379,8 @@ function SkillsPanel({ skills }: { skills: typeof SUBSTANCE.skillsAndCerts }) {
         <button
           onClick={goNext}
           type="button"
-          className="rounded-full bg-[#F5F5F5] px-3 py-1 hover:bg-[#E5E7EB]"
+          aria-label="Next skills group"
+          className="rounded-full bg-[#F5F5F5] px-3 py-1 transition-colors duration-200 hover:bg-[#E5E7EB]"
         >
           ▶
         </button>
@@ -288,13 +391,45 @@ function SkillsPanel({ skills }: { skills: typeof SUBSTANCE.skillsAndCerts }) {
 
 function ProjectsPanel({ projects }: { projects: typeof SUBSTANCE.projects }) {
   const [index, setIndex] = useState(0);
+  const [mediaIndex, setMediaIndex] = useState(0);
   const total = projects.length;
   const current = projects[index];
+
+  useEffect(() => {
+    if (current) setMediaIndex(0);
+  }, [current?.id]);
 
   if (!current) return null;
 
   const goPrev = () => setIndex((prev) => (prev - 1 + total) % total);
   const goNext = () => setIndex((prev) => (prev + 1) % total);
+  const media = current.media ?? [];
+  const quickLookCount = media.length;
+  const activeMedia = media[mediaIndex] ?? null;
+  const mediaIconTools = current.stack.slice(0, 6);
+
+  const goPrevMedia = () => {
+    if (quickLookCount <= 1) return;
+    setMediaIndex((prev) => (prev - 1 + quickLookCount) % quickLookCount);
+  };
+
+  const goNextMedia = () => {
+    if (quickLookCount <= 1) return;
+    setMediaIndex((prev) => (prev + 1) % quickLookCount);
+  };
+
+  const projectLinks =
+    current.links && current.links.length > 0
+      ? current.links
+      : [
+          {
+            label: "Request Access",
+            href: `mailto:${SUBSTANCE.meta.email}?subject=${encodeURIComponent(
+              `Project Access: ${current.name}`,
+            )}`,
+            external: false,
+          },
+        ];
 
   return (
     <div className="flex w-full items-stretch rounded-2xl border-2 border-[#3B413C]/10 bg-white/95 p-6 shadow-xl backdrop-blur-md">
@@ -308,66 +443,162 @@ function ProjectsPanel({ projects }: { projects: typeof SUBSTANCE.projects }) {
         <h2 className="text-h2-sans text-[#111827]">
           {SUBSTANCE.story.freefall.toolsIntro}
         </h2>
-        <div>
-          <p className="text-sm text-[#6B7280] flex items-center gap-2">
-            <FaCalendarAlt className="h-4 w-4 text-[#F19A3E]" />
-            {current.timeframe}
-          </p>
-          <p className="text-body-sans font-semibold text-[#111827] mt-1">
-            {current.name}
-          </p>
-          <p className="text-sm text-[#4B5563] mt-1">{current.tagline}</p>
-        </div>
-        {current.media && current.media.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-3">
-            {current.media.map((media) =>
-              media.kind === "image" ? (
-                <img
-                  key={media.src}
-                  src={media.src}
-                  alt={media.alt}
-                  className="h-32 w-auto rounded-lg border border-[#E5E7EB] object-cover shadow-sm"
-                />
-              ) : (
-                <div
-                  key={media.embedUrl}
-                  className="aspect-video w-full max-w-md overflow-hidden rounded-lg border border-[#E5E7EB] shadow-sm"
-                >
-                  <iframe
-                    src={media.embedUrl}
-                    title={media.title || current.name}
-                    className="h-full w-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
-              ),
-            )}
-          </div>
-        )}
-        {current.links && current.links.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-3 text-sm">
-            {current.links.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                target={link.external ? "_blank" : undefined}
-                rel={link.external ? "noreferrer" : undefined}
-                className="inline-flex items-center gap-2 rounded-full bg-[#59A96A] px-3 py-1 text-xs font-semibold text-white shadow hover:bg-[#4a8d58]"
+        <AnimatePresence mode="wait">
+          <motion.article
+            key={current.id}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="rounded-2xl border border-[#3B413C]/12 bg-[#F9FAFB] p-4 shadow-md"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-sm text-[#6B7280] flex items-center gap-2">
+                <FaCalendarAlt className="h-4 w-4 text-[#F19A3E]" />
+                {current.timeframe}
+              </p>
+              <span
+                className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold ${getStatusToneClasses(
+                  current.status.tone,
+                )}`}
               >
-                <FaGithub className="h-3 w-3" />
-                <span>{link.label}</span>
-                {link.external && <FaExternalLinkAlt className="h-3 w-3" />}
-              </a>
-            ))}
-          </div>
-        )}
+                {current.status.label}
+              </span>
+            </div>
+
+            <div className="mt-2">
+              <p className="text-body-sans font-semibold text-[#111827]">
+                {current.name}
+              </p>
+              <p className="mt-1 text-sm text-[#4B5563]">{current.tagline}</p>
+              <p className="mt-2 text-xs text-[#6B7280]">{current.status.access}</p>
+            </div>
+
+            <div className="mt-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+                  Quick Look
+                </p>
+                {quickLookCount > 1 && (
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={goPrevMedia}
+                      aria-label="Previous media"
+                      className="rounded-full border border-[#3B413C]/15 bg-white px-2 py-0.5 text-xs text-[#3B413C] transition-colors hover:bg-[#E5E7EB]"
+                    >
+                      ◀
+                    </button>
+                    <span className="text-[11px] text-[#6B7280]">
+                      {mediaIndex + 1}/{quickLookCount}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={goNextMedia}
+                      aria-label="Next media"
+                      className="rounded-full border border-[#3B413C]/15 bg-white px-2 py-0.5 text-xs text-[#3B413C] transition-colors hover:bg-[#E5E7EB]"
+                    >
+                      ▶
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-2 overflow-hidden rounded-xl border border-[#E5E7EB] bg-white">
+                {activeMedia ? (
+                  activeMedia.kind === "image" ? (
+                    <img
+                      src={activeMedia.src}
+                      alt={activeMedia.alt}
+                      className="h-44 w-full object-cover"
+                    />
+                  ) : (
+                    <div
+                      className="aspect-video w-full overflow-hidden"
+                    >
+                      <iframe
+                        src={activeMedia.embedUrl}
+                        title={activeMedia.title || current.name}
+                        className="h-full w-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                  )
+                ) : (
+                  <div className="relative flex h-44 w-full items-center justify-center overflow-hidden bg-[#0F1519]">
+                    <div className="absolute -left-8 -top-10 h-28 w-28 rounded-full bg-[#59A96A]/18 blur-xl" />
+                    <div className="absolute -bottom-12 -right-8 h-32 w-32 rounded-full bg-[#F19A3E]/20 blur-xl" />
+                    <FaProjectDiagram className="h-12 w-12 text-white/80" />
+                    <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+                      {mediaIconTools.map((tool) => (
+                        <span
+                          key={`${current.id}-media-icon-${tool}`}
+                          className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-black/35"
+                        >
+                          {renderTechIcon(tool, "h-3.5 w-3.5")}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+                Built With
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {current.stack.map((tool) => (
+                  <span
+                    key={tool}
+                    className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-3 py-1 text-xs text-[#3B413C]"
+                  >
+                    {renderTechIcon(tool)}
+                    <span>{tool}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+                Visit
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {projectLinks.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noreferrer" : undefined}
+                    className="inline-flex items-center gap-2 rounded-full bg-[#59A96A] px-3 py-1 text-xs font-semibold text-white shadow transition-colors duration-200 hover:bg-[#4a8d58]"
+                  >
+                    {link.label.toLowerCase().includes("github") ? (
+                      <FaGithub className="h-3 w-3" />
+                    ) : (
+                      <FaGlobe className="h-3 w-3" />
+                    )}
+                    <span>{link.label}</span>
+                    {link.external && <FaExternalLinkAlt className="h-3 w-3" />}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <p className="mt-3 text-xs leading-relaxed text-[#4B5563]">
+              {current.impactBullets[0]}
+            </p>
+          </motion.article>
+        </AnimatePresence>
       </div>
       <div className="ml-4 flex w-20 flex-col items-center justify-center gap-2 text-xs text-[#4B5563]">
         <button
           onClick={goPrev}
           type="button"
-          className="rounded-full bg-[#F5F5F5] px-3 py-1 hover:bg-[#E5E7EB]"
+          aria-label="Previous project"
+          className="rounded-full bg-[#F5F5F5] px-3 py-1 transition-colors duration-200 hover:bg-[#E5E7EB]"
         >
           ◀
         </button>
@@ -377,10 +608,24 @@ function ProjectsPanel({ projects }: { projects: typeof SUBSTANCE.projects }) {
         <button
           onClick={goNext}
           type="button"
-          className="rounded-full bg-[#F5F5F5] px-3 py-1 hover:bg-[#E5E7EB]"
+          aria-label="Next project"
+          className="rounded-full bg-[#F5F5F5] px-3 py-1 transition-colors duration-200 hover:bg-[#E5E7EB]"
         >
           ▶
         </button>
+        <div className="mt-2 flex flex-wrap justify-center gap-1.5">
+          {projects.map((project, idx) => (
+            <button
+              key={project.id}
+              type="button"
+              onClick={() => setIndex(idx)}
+              aria-label={`Jump to project ${idx + 1}`}
+              className={`h-1.5 w-1.5 rounded-full transition-colors ${
+                idx === index ? "bg-[#3B413C]" : "bg-[#C5C9CC]"
+              }`}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -410,56 +655,144 @@ function ExperiencePanel({
 }: {
   experience: typeof SUBSTANCE.experience;
 }) {
-  const [index, setIndex] = useState(0);
-  const total = experience.length;
-  const current = experience[index];
+  const parseMonthYear = (value: string) => {
+    const [monthRaw, yearRaw] = value.trim().split(/\s+/);
+    const year = Number(yearRaw);
+    const monthLookup: Record<string, number> = {
+      jan: 0,
+      feb: 1,
+      mar: 2,
+      apr: 3,
+      may: 4,
+      jun: 5,
+      jul: 6,
+      aug: 7,
+      sep: 8,
+      oct: 9,
+      nov: 10,
+      dec: 11,
+    };
+    const month = monthLookup[monthRaw.toLowerCase().slice(0, 3)] ?? 0;
+    return new Date(Number.isNaN(year) ? 1970 : year, month, 1).getTime();
+  };
 
-  const goPrev = () => setIndex((prev) => (prev - 1 + total) % total);
-  const goNext = () => setIndex((prev) => (prev + 1) % total);
+  const orderedExperience = useMemo(
+    () =>
+      [...experience].sort(
+        (a, b) => parseMonthYear(a.start) - parseMonthYear(b.start),
+      ),
+    [experience],
+  );
+
+  const [activeExperienceId, setActiveExperienceId] = useState<string>(
+    orderedExperience[orderedExperience.length - 1]?.id ?? "",
+  );
+
+  useEffect(() => {
+    if (
+      orderedExperience.length > 0 &&
+      !orderedExperience.some((exp) => exp.id === activeExperienceId)
+    ) {
+      setActiveExperienceId(orderedExperience[orderedExperience.length - 1].id);
+    }
+  }, [orderedExperience, activeExperienceId]);
+
+  const activeExperience =
+    orderedExperience.find((exp) => exp.id === activeExperienceId) ??
+    orderedExperience[orderedExperience.length - 1];
+
+  if (!activeExperience) return null;
 
   return (
-    <div className="flex w-full items-stretch rounded-2xl border-2 border-[#3B413C]/10 bg-white/95 p-6 shadow-xl backdrop-blur-md">
-      <div className="mr-4 flex flex-col items-center justify-center gap-2 border-r border-[#E5E7EB] pr-4">
+    <div className="rounded-2xl border-2 border-[#3B413C]/10 bg-white/95 p-6 shadow-xl backdrop-blur-md">
+      <div className="mb-4 flex items-center gap-2">
         <FaBriefcase className="h-6 w-6 text-[#59A96A]" />
         <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6B7280]">
           Experience
         </span>
       </div>
-      <div className="flex-1">
-        <h2 className="text-h2-sans text-[#111827]">
-          {SUBSTANCE.story.freefall.experienceIntro}
-        </h2>
-        <div className="mt-4">
-          {current && (
-            <FreefallProjectBillboard
-              project={{
-                id: current.id,
-                title: `${current.org}, ${current.role}`,
-                description: current.oneLineImpact,
-              }}
-              index={0}
-            />
-          )}
+
+      <h2 className="text-h2-sans text-[#111827]">
+        {SUBSTANCE.story.freefall.experienceIntro}
+      </h2>
+
+      <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+        <div className="relative rounded-xl border border-[#3B413C]/12 bg-[#F9FAFB] p-4">
+          <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+            Timeline (oldest to newest)
+          </div>
+          <div className="absolute bottom-6 left-[1.08rem] top-14 w-px bg-[#3B413C]/15" />
+          <div className="space-y-3">
+            {orderedExperience.map((exp) => {
+              const isActive = exp.id === activeExperience.id;
+              return (
+                <button
+                  key={exp.id}
+                  type="button"
+                  onClick={() => setActiveExperienceId(exp.id)}
+                  className={`relative block w-full rounded-lg border px-3 py-2 text-left transition-colors duration-200 ${
+                    isActive
+                      ? "border-[#59A96A]/40 bg-[#59A96A]/10"
+                      : "border-[#E5E7EB] bg-white hover:bg-[#F5F5F5]"
+                  }`}
+                >
+                  <span
+                    className={`absolute -left-[0.88rem] top-4 h-2.5 w-2.5 rounded-full ${
+                      isActive ? "bg-[#59A96A]" : "bg-[#C5C9CC]"
+                    }`}
+                  />
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6B7280]">
+                    {exp.start} to {exp.end}
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-[#111827]">{exp.org}</p>
+                  <p className="text-xs text-[#4B5563]">{exp.role}</p>
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
-      <div className="ml-4 flex w-20 flex-col items-center justify-center gap-2 text-xs text-[#4B5563]">
-        <button
-          onClick={goPrev}
-          type="button"
-          className="rounded-full bg-[#F5F5F5] px-3 py-1 hover:bg-[#E5E7EB]"
-        >
-          ◀
-        </button>
-        <span className="font-medium text-[#111827]">
-          {index + 1}/{total}
-        </span>
-        <button
-          onClick={goNext}
-          type="button"
-          className="rounded-full bg-[#F5F5F5] px-3 py-1 hover:bg-[#E5E7EB]"
-        >
-          ▶
-        </button>
+
+        <AnimatePresence mode="wait">
+          <motion.article
+            key={activeExperience.id}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="rounded-xl border border-[#3B413C]/12 bg-[#F9FAFB] p-4 shadow-sm"
+          >
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6B7280]">
+              {activeExperience.start} to {activeExperience.end}
+            </p>
+            <h3 className="mt-1 text-base font-semibold text-[#111827]">
+              {activeExperience.org}
+            </h3>
+            <p className="text-sm text-[#4B5563]">{activeExperience.role}</p>
+            <p className="mt-2 text-xs text-[#6B7280]">{activeExperience.location}</p>
+
+            <p className="mt-3 text-sm leading-relaxed text-[#3B413C]">
+              {activeExperience.oneLineImpact}
+            </p>
+
+            <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-[#4B5563]">
+              {activeExperience.bullets.map((bullet) => (
+                <li key={bullet}>{bullet}</li>
+              ))}
+            </ul>
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              {activeExperience.stack.map((tool) => (
+                <span
+                  key={tool}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[#E5E7EB] bg-white px-2.5 py-1 text-[11px] text-[#3B413C]"
+                >
+                  {renderTechIcon(tool, "h-3 w-3")}
+                  <span>{tool}</span>
+                </span>
+              ))}
+            </div>
+          </motion.article>
+        </AnimatePresence>
       </div>
     </div>
   );

@@ -7,6 +7,13 @@
 // - Avoid em dashes. Use commas or parentheses only when needed.
 
 import resumePdf from "@/app/assets/Stephen_Syl_Akinwale_Resume.pdf";
+import blockopolyBoardMedia from "@/app/assets/project-media/blockopoly-board.svg";
+import curideFlowMedia from "@/app/assets/project-media/curide-flow.svg";
+import crossingCafeMenuMedia from "@/app/assets/project-media/crossing-cafe-menu.svg";
+import wishlistGiftingMedia from "@/app/assets/project-media/wishlist-gifting.svg";
+import dearDaysCalendarMedia from "@/app/assets/project-media/deardays-calendar.svg";
+import storybotPipelineMedia from "@/app/assets/project-media/storybot-pipeline.svg";
+import nbaShotmapMedia from "@/app/assets/project-media/nba-shotmap.svg";
 
 export type Link = {
   label: string;
@@ -44,6 +51,11 @@ export type ProjectItem = {
   name: string;
   timeframe: string;
   tagline: string;
+  status: {
+    label: string;
+    tone: "live" | "building" | "private" | "archived" | "completed";
+    access: string;
+  };
   impactBullets: string[];
   stack: string[];
   links?: Link[];
@@ -92,12 +104,12 @@ export const SUBSTANCE = {
     links: {
       github: {
         label: "GitHub",
-        href: "https://github.com/stphnmade",
+        href: "https://github.com/stephensyl-akinwale",
         external: true,
       },
       linkedin: {
         label: "LinkedIn",
-        href: "https://www.linkedin.com/in/stephen-syl-akinwale/",
+        href: "https://www.linkedin.com/in/stephensyl-akinwale/",
         external: true,
       },
       blockopoly: {
@@ -327,6 +339,11 @@ export const SUBSTANCE = {
       timeframe: "Jun 2025 to Present",
       tagline:
         "Online multiplayer card game with stable reconnects and synchronized state.",
+      status: {
+        label: "Live",
+        tone: "live",
+        access: "Public demo is available, source updates are ongoing.",
+      },
       impactBullets: [
         "Real-time multiplayer web games often break on refresh and struggle with low-latency synchronization across players.",
         "Architect a production-ready system supporting rooms, reconnects, and synchronized turn-based state.",
@@ -344,11 +361,23 @@ export const SUBSTANCE = {
       ],
       links: [
         {
+          label: "Live Demo",
+          href: "https://playblockopoly.com",
+          external: true,
+        },
+        {
           label: "GitHub (Blockopoly)",
-          href: "https://github.com/stphnmade",
+          href: "https://github.com/stephensyl-akinwale",
           external: true,
         },
         // Agent: replace with specific repo link when you provide it.
+      ],
+      media: [
+        {
+          kind: "image",
+          src: blockopolyBoardMedia,
+          alt: "Blockopoly multiplayer board preview",
+        },
       ],
     },
     {
@@ -357,6 +386,11 @@ export const SUBSTANCE = {
       timeframe: "Oct 2024 to Dec 2024",
       tagline:
         "Community ridesharing platform addressing affordability and safety gaps in student transportation.",
+      status: {
+        label: "Prototype",
+        tone: "archived",
+        access: "Academic prototype, walkthrough available on request.",
+      },
       impactBullets: [
         "Addressed affordability and safety gaps in student transportation at Cornell by designing a ridesharing platform tailored to campus needs.",
         "Led a user-centered redesign after interviewing 12 students to uncover trust, role clarity, and scheduling pain points.",
@@ -364,6 +398,13 @@ export const SUBSTANCE = {
         "Improved task completion by 33% and reduced navigation errors by 40%, with instructors projecting a 25% reduction in solo car trips if deployed.",
       ],
       stack: ["Figma", "Balsamiq", "UX Research", "Agile", "Google Sheets"],
+      media: [
+        {
+          kind: "image",
+          src: curideFlowMedia,
+          alt: "CURide booking and trust workflow preview",
+        },
+      ],
     },
     {
       id: "crossing-cafe",
@@ -371,6 +412,11 @@ export const SUBSTANCE = {
       timeframe: "Mar 2024 to May 2024",
       tagline:
         "Responsive restaurant website grounded in stakeholder workflows and persistent ordering data.",
+      status: {
+        label: "Completed",
+        tone: "completed",
+        access: "MVP completed, demo details available on request.",
+      },
       impactBullets: [
         "A local cafe lacked a modern web presence for menu discovery and order clarity, increasing in-store friction during rush periods.",
         "Partnered with a four-person team to deliver a responsive website grounded in stakeholder requirements and customer workflows.",
@@ -378,6 +424,13 @@ export const SUBSTANCE = {
         "Delivered an MVP that centralized menu updates, reduced ordering confusion, and demonstrated a scalable data-backed ordering workflow.",
       ],
       stack: ["HTML", "CSS", "JavaScript", "SQLite", "UX Interviews"],
+      media: [
+        {
+          kind: "image",
+          src: crossingCafeMenuMedia,
+          alt: "Crossing Cafe ordering and menu dashboard preview",
+        },
+      ],
     },
     {
       id: "wishlist",
@@ -385,6 +438,11 @@ export const SUBSTANCE = {
       timeframe: "Jan 2025 to Present",
       tagline:
         "Full-stack wishlist platform for transparent, trackable group gifting.",
+      status: {
+        label: "In Development",
+        tone: "building",
+        access: "Private alpha, invite-based previews.",
+      },
       impactBullets: [
         "Group gifting coordination lacked transparency, progress tracking, and shared context across friends and families.",
         "Build a full-stack wishlist product enabling users to create, share, and track gifting progress with social signals.",
@@ -392,6 +450,13 @@ export const SUBSTANCE = {
         "Delivered a maintainable architecture enabling rapid iteration on features like gifting history, friend sorting, and progress-based goals.",
       ],
       stack: ["React", "Go", "gRPC", "PostgreSQL", "Docker"],
+      media: [
+        {
+          kind: "image",
+          src: wishlistGiftingMedia,
+          alt: "Wishlist collaborative gifting dashboard preview",
+        },
+      ],
     },
     {
       id: "dear-days",
@@ -399,6 +464,11 @@ export const SUBSTANCE = {
       timeframe: "Jul 2025 to Present",
       tagline:
         "Shared calendar for birthdays and special events across families.",
+      status: {
+        label: "In Development",
+        tone: "building",
+        access: "Private development build.",
+      },
       impactBullets: [
         "Families and groups frequently miss birthdays and special events due to fragmented calendars and weak reminder workflows.",
         "Design a centralized, emotionally engaging system to track special days with simple sharing and clean data models.",
@@ -406,6 +476,13 @@ export const SUBSTANCE = {
         "Created a scalable product foundation with retention hooks and normalized schemas that support expansion to multi-family use.",
       ],
       stack: ["Next.js", "Prisma", "Tailwind", "Google OAuth"],
+      media: [
+        {
+          kind: "image",
+          src: dearDaysCalendarMedia,
+          alt: "Dear Days shared calendar preview",
+        },
+      ],
     },
     {
       id: "storybot",
@@ -413,6 +490,11 @@ export const SUBSTANCE = {
       timeframe: "Jul 2025 to Present",
       tagline:
         "Automation pipeline that converts text stories into captioned short-form videos.",
+      status: {
+        label: "Private",
+        tone: "private",
+        access: "Internal pipeline, no public deployment yet.",
+      },
       impactBullets: [
         "Short-form creators face high friction converting text stories into captioned videos with consistent pacing and narration quality.",
         "Automate scraping, cleaning, narration, captioning, and audio-video composition into a repeatable pipeline.",
@@ -420,6 +502,13 @@ export const SUBSTANCE = {
         "Reduced production time from over 20 minutes to under 2 minutes per video while maintaining caption alignment and audio clarity.",
       ],
       stack: ["Node.js", "Python", "FFmpeg", "gTTS", "Express"],
+      media: [
+        {
+          kind: "image",
+          src: storybotPipelineMedia,
+          alt: "Storybot automation pipeline preview",
+        },
+      ],
     },
     {
       id: "nba-shot-trends",
@@ -427,6 +516,11 @@ export const SUBSTANCE = {
       timeframe: "Feb 2025 to May 2025",
       tagline:
         "3D visualization and analysis of how NBA shot selection shifted across the modern era.",
+      status: {
+        label: "Completed",
+        tone: "completed",
+        access: "Project report completed, walkthrough available on request.",
+      },
       impactBullets: [
         "Coaches and fans lacked a clear, visual narrative for how shot selection shifted across the modern NBA era.",
         "Analyzed more than 300,000 NBA shots from 2003 to 2023 to identify spatial and temporal trends, including player-specific comparisons.",
@@ -434,6 +528,13 @@ export const SUBSTANCE = {
         "Produced an instructor-reviewed report and reproducible workflow highlighting measurable increases in three-point dependency over time.",
       ],
       stack: ["R", "tidyverse", "ggplot2", "Quarto", "GitHub"],
+      media: [
+        {
+          kind: "image",
+          src: nbaShotmapMedia,
+          alt: "NBA shot trends visualization preview",
+        },
+      ],
     },
   ] satisfies ProjectItem[],
 

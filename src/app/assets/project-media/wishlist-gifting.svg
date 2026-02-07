@@ -1,0 +1,30 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Wishlist gifting dashboard</title>
+  <desc id="desc">Collaborative gifting cards, progress bars, and event feed.</desc>
+  <rect width="1200" height="675" fill="#121A25"/>
+  <rect x="74" y="62" width="1052" height="551" rx="28" fill="#1C2938" stroke="#334A62" stroke-width="2"/>
+
+  <rect x="120" y="114" width="688" height="498" rx="18" fill="#F5F7FB"/>
+  <rect x="836" y="114" width="270" height="498" rx="18" fill="#E9EEF5"/>
+
+  <rect x="160" y="162" width="608" height="94" rx="12" fill="#E6ECF5"/>
+  <rect x="160" y="280" width="292" height="148" rx="12" fill="#E6ECF5"/>
+  <rect x="476" y="280" width="292" height="148" rx="12" fill="#E6ECF5"/>
+  <rect x="160" y="452" width="608" height="118" rx="12" fill="#E6ECF5"/>
+
+  <rect x="872" y="158" width="200" height="22" rx="6" fill="#D2DBE8"/>
+  <rect x="872" y="196" width="156" height="18" rx="6" fill="#DCE4EE"/>
+  <rect x="872" y="236" width="200" height="96" rx="10" fill="#DCE4EE"/>
+  <rect x="872" y="354" width="200" height="96" rx="10" fill="#DCE4EE"/>
+  <rect x="872" y="472" width="200" height="96" rx="10" fill="#DCE4EE"/>
+
+  <rect x="176" y="188" width="420" height="12" rx="6" fill="#B8C9DF"/>
+  <rect x="176" y="210" width="520" height="12" rx="6" fill="#C8D5E7"/>
+  <rect x="176" y="232" width="360" height="12" rx="6" fill="#C8D5E7"/>
+
+  <circle cx="700" cy="194" r="26" fill="#DD403A"/>
+  <circle cx="700" cy="228" r="26" fill="#59A96A"/>
+
+  <text x="120" y="94" fill="#EAF0F3" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="28" font-weight="700">Wishlist</text>
+  <text x="120" y="118" fill="#9FB0C2" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="16">Collaborative gifting progress and shared context</text>
+</svg>
