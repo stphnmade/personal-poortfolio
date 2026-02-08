@@ -20,19 +20,27 @@ Sky notes are implemented with a storage adapter in `src/app/services/storyNotes
 - API endpoint: `/api/notes`
 - Function file: `netlify/functions/notes.js`
 - Redirect config: `netlify.toml`
+- Provider:
+  - `NOTES_STORAGE_PROVIDER=neon` (recommended on Netlify)
+  - uses `NETLIFY_DATABASE_URL` automatically with `@netlify/neon`
 
-Current function provider defaults to `memory` for scaffolding and contract testing.
-This is not durable storage in production.
+Current provider auto-selects:
+- `neon` when `NETLIFY_DATABASE_URL` is present
+- otherwise `memory` for local scaffolding
+
+`memory` is not durable storage in production.
 
 ### Production provider hookup
 
-When you are ready to connect Netlify + database:
+For Netlify + Neon:
 
-1. Set `NOTES_STORAGE_PROVIDER` in Netlify environment.
-2. Replace the provider branches in `netlify/functions/notes.js`:
-   - `listNotesFromProvider()`
-   - `saveNoteToProvider()`
-3. Keep response shape unchanged:
+1. Add dependency:
+   - `npm install @netlify/neon`
+2. Set env vars in Netlify:
+   - `NOTES_STORAGE_PROVIDER=neon`
+   - `NETLIFY_DATABASE_URL` (from Netlify DB)
+3. Deploy. Function auto-creates table `community_notes`.
+4. Response shape stays:
    - `GET /api/notes` -> `{ notes: StoryNote[] }`
    - `POST /api/notes` -> `{ note: StoryNote }`
 

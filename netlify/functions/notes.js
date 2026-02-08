@@ -1,12 +1,16 @@
 const MAX_MESSAGE_LENGTH = 500
 const MAX_AUTHOR_LENGTH = 80
-const PROVIDER = process.env.NOTES_STORAGE_PROVIDER || 'memory'
+const PROVIDER =
+  process.env.NOTES_STORAGE_PROVIDER ||
+  (process.env.NETLIFY_DATABASE_URL ? 'neon' : 'memory')
 
 /**
  * Temporary in-memory store.
  * Works for testing only, does not persist across cold starts/deploys.
  */
 const memoryNotes = []
+let neonSqlInstance = null
+let neonSchemaReadyPromise = null
 
 function json(statusCode, body) {
   return {
@@ -42,16 +46,75 @@ function normalizeNote(input) {
   }
 }
 
+function dbRowToNote(row) {
+  return {
+    id: String(row.id),
+    message: String(row.message),
+    author: String(row.author ?? ''),
+    createdAt: new Date(row.created_at).toISOString(),
+  }
+}
+
+async function getNeonSql() {
+  if (neonSqlInstance) return neonSqlInstance
+
+  const { neon } = await import('@netlify/neon')
+  neonSqlInstance = neon()
+  return neonSqlInstance
+}
+
+async function ensureNeonSchema(sql) {
+  if (!neonSchemaReadyPromise) {
+    neonSchemaReadyPromise = sql`
+      CREATE TABLE IF NOT EXISTS community_notes (
+        id TEXT PRIMARY KEY,
+        message TEXT NOT NULL,
+        author TEXT NOT NULL DEFAULT '',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `
+  }
+  await neonSchemaReadyPromise
+}
+
+async function listNotesFromNeon() {
+  const sql = await getNeonSql()
+  await ensureNeonSchema(sql)
+
+  const rows = await sql`
+    SELECT id, message, author, created_at
+    FROM community_notes
+    ORDER BY created_at ASC
+  `
+
+  return rows.map(dbRowToNote)
+}
+
+async function saveNoteToNeon(note) {
+  const sql = await getNeonSql()
+  await ensureNeonSchema(sql)
+
+  const [saved] = await sql`
+    INSERT INTO community_notes (id, message, author, created_at)
+    VALUES (${note.id}, ${note.message}, ${note.author}, ${note.createdAt}::timestamptz)
+    ON CONFLICT (id)
+    DO UPDATE SET
+      message = EXCLUDED.message,
+      author = EXCLUDED.author,
+      created_at = EXCLUDED.created_at
+    RETURNING id, message, author, created_at
+  `
+
+  return dbRowToNote(saved ?? note)
+}
+
 async function listNotesFromProvider() {
   if (PROVIDER === 'memory') {
     return [...memoryNotes].sort((a, b) => a.createdAt.localeCompare(b.createdAt))
   }
-
-  /**
-   * TODO: provider adapter
-   * Replace this branch with your DB reads for Netlify production.
-   * Keep the same return shape: Array<{id,message,author,createdAt}>.
-   */
+  if (PROVIDER === 'neon') {
+    return listNotesFromNeon()
+  }
   throw new Error(`Unsupported NOTES_STORAGE_PROVIDER: ${PROVIDER}`)
 }
 
@@ -63,12 +126,9 @@ async function saveNoteToProvider(note) {
     }
     return note
   }
-
-  /**
-   * TODO: provider adapter
-   * Replace this branch with your DB insert/upsert for Netlify production.
-   * Return the saved note object.
-   */
+  if (PROVIDER === 'neon') {
+    return saveNoteToNeon(note)
+  }
   throw new Error(`Unsupported NOTES_STORAGE_PROVIDER: ${PROVIDER}`)
 }
 
