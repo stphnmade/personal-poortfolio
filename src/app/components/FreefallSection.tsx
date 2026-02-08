@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import {
   AnimatePresence,
   motion,
@@ -63,17 +63,191 @@ interface FreefallSectionProps {
   onOpenNote: () => void;
 }
 
-interface FallingObjectProps {
+interface NoteCloudData {
   id: string;
-  content: string;
-  progress: MotionValue<number>;
-  theme: "dark" | "light";
+  top: number;
+  width: number;
+  largePuffSize: number;
+  smallPuffSize: number;
+  horizontalOffset: number;
+  duration: number;
+  delay: number;
+  bobDuration: number;
+  note: {
+    message: string;
+    author: string;
+  } | null;
+  toneIndex: number;
+}
+
+interface NoteCloudTone {
+  cloud: string;
+  outline: string;
+  text: string;
+  toast: string;
+  toastText: string;
+}
+
+interface StoryNotePreview {
+  id: string;
+  message: string;
+  author: string;
 }
 
 const EXPERIENCE = CHAPTERS.find((c) => c.id === "experience")!;
 const TOOLS = CHAPTERS.find((c) => c.id === "tools")!;
 const FREEFALL_START_PROGRESS = EXPERIENCE.start;
 const FREEFALL_END_PROGRESS = TOOLS.end;
+const NOTE_CLOUD_LIMIT = 4;
+
+const NOTE_CLOUD_TONES_DARK: NoteCloudTone[] = [
+  {
+    cloud: "bg-[#EEF4F1]",
+    outline: "border-[#59A96A]/55",
+    text: "text-[#E8F4EA]",
+    toast: "bg-[#0D1C2B]/94 border-[#59A96A]/45",
+    toastText: "text-[#DDECF2]",
+  },
+  {
+    cloud: "bg-[#EEF3FA]",
+    outline: "border-[#4A90E2]/55",
+    text: "text-[#E7EEFF]",
+    toast: "bg-[#121B34]/94 border-[#4A90E2]/42",
+    toastText: "text-[#DCE6FA]",
+  },
+  {
+    cloud: "bg-[#F7EEE6]",
+    outline: "border-[#F19A3E]/52",
+    text: "text-[#FFECD9]",
+    toast: "bg-[#241915]/94 border-[#F19A3E]/42",
+    toastText: "text-[#FFE7D1]",
+  },
+];
+
+const NOTE_CLOUD_TONES_LIGHT: NoteCloudTone[] = [
+  {
+    cloud: "bg-[#F5FBF7]",
+    outline: "border-[#59A96A]/60",
+    text: "text-[#1E4D2B]",
+    toast: "bg-[#F2FBF5]/97 border-[#59A96A]/48",
+    toastText: "text-[#244C30]",
+  },
+  {
+    cloud: "bg-[#F4F8FF]",
+    outline: "border-[#4A90E2]/62",
+    text: "text-[#1C3E69]",
+    toast: "bg-[#F2F7FF]/97 border-[#4A90E2]/48",
+    toastText: "text-[#1F436D]",
+  },
+  {
+    cloud: "bg-[#FFF7EE]",
+    outline: "border-[#F19A3E]/62",
+    text: "text-[#68401B]",
+    toast: "bg-[#FFF5EA]/97 border-[#F19A3E]/46",
+    toastText: "text-[#6B431E]",
+  },
+];
+
+function seedFromString(value: string) {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash << 5) - hash + value.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+function getSeededNumber(seed: number, min: number, max: number) {
+  const normalized = (Math.sin(seed * 12.9898) * 43758.5453) % 1;
+  const fraction = normalized - Math.floor(normalized);
+  return min + fraction * (max - min);
+}
+
+function buildCloudData(userNotes: StoryNotePreview[]) {
+  const notesForClouds = [...userNotes]
+    .sort((a, b) => seedFromString(a.id) - seedFromString(b.id))
+    .slice(0, NOTE_CLOUD_LIMIT);
+
+  const noteClouds: NoteCloudData[] = notesForClouds.map((note, index) => {
+    const seed = seedFromString(note.id);
+    const duration = getSeededNumber(seed + 3, 38, 62);
+    const phase = getSeededNumber(seed + 4, 0, duration);
+    const largePuffSize = getSeededNumber(seed + 5, 48, 60);
+    return {
+      id: `note-cloud-${note.id}`,
+      top: getSeededNumber(seed + 1, 14, 68),
+      width: getSeededNumber(seed + 2, 100, 180),
+      largePuffSize,
+      smallPuffSize: largePuffSize * 0.72,
+      horizontalOffset: getSeededNumber(seed + 6, -10, 10),
+      duration,
+      delay: -phase,
+      bobDuration: getSeededNumber(seed + 7, 6.8, 12),
+      note: note,
+      toneIndex: (seed + index) % NOTE_CLOUD_TONES_DARK.length,
+    };
+  });
+
+  const ambientCloudCount = 5;
+  const ambientClouds: NoteCloudData[] = Array.from({
+    length: ambientCloudCount,
+  }).map((_, index) => {
+    const seed = seedFromString(`ambient-cloud-${index}`);
+    const duration = getSeededNumber(seed + 3, 44, 70);
+    const phase = getSeededNumber(seed + 4, 0, duration);
+    const largePuffSize = getSeededNumber(seed + 5, 48, 60);
+    return {
+      id: `ambient-cloud-${index}`,
+      top: getSeededNumber(seed + 1, 12, 72),
+      width: getSeededNumber(seed + 2, 100, 180),
+      largePuffSize,
+      smallPuffSize: largePuffSize * 0.72,
+      horizontalOffset: getSeededNumber(seed + 6, -10, 10),
+      duration,
+      delay: -phase,
+      bobDuration: getSeededNumber(seed + 7, 8, 14),
+      note: null,
+      toneIndex: index % NOTE_CLOUD_TONES_DARK.length,
+    };
+  });
+
+  return [...ambientClouds, ...noteClouds].sort((a, b) => a.top - b.top);
+}
+
+function getCloudTone(
+  isDark: boolean,
+  toneIndex: number,
+  isNoteCloud: boolean,
+): NoteCloudTone {
+  if (!isNoteCloud) {
+    return isDark
+      ? {
+          cloud: "bg-[#F1F5FA]",
+          outline: "border-[#D8E2EE]/90",
+          text: "text-[#E4EDF5]",
+          toast: "bg-[#0F1D29]/92 border-white/20",
+          toastText: "text-[#DDE8F0]",
+        }
+      : {
+          cloud: "bg-[#FFFFFF]",
+          outline: "border-[#D5DEE7]",
+          text: "text-[#3B4A59]",
+          toast: "bg-white/97 border-[#C8D4DE]/90",
+          toastText: "text-[#2E3D4D]",
+        };
+  }
+
+  const tones = isDark ? NOTE_CLOUD_TONES_DARK : NOTE_CLOUD_TONES_LIGHT;
+  return tones[toneIndex % tones.length];
+}
+
+function compactNoteText(note: { message: string; author: string }, limit = 120) {
+  const message = note.message.trim();
+  const author = note.author.trim();
+  const withAuthor = author ? `${message} — ${author}` : message;
+  if (withAuthor.length <= limit) return withAuthor;
+  return `${withAuthor.slice(0, limit - 1)}…`;
+}
 
 function getStatusToneClasses(
   tone: (typeof SUBSTANCE.projects)[number]["status"]["tone"],
@@ -224,6 +398,22 @@ export function FreefallSection({
   const [activeBand, setActiveBand] = useState<
     "experience" | "skills" | "projects"
   >("experience");
+  const [activeCloudId, setActiveCloudId] = useState<string | null>(null);
+  const cloudData = useMemo(() => buildCloudData(userNotes), [userNotes]);
+  const noteCloudsPaused = activeCloudId !== null;
+
+  useEffect(() => {
+    if (!activeCloudId) return;
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("[data-note-cloud-shell]")) return;
+      setActiveCloudId(null);
+    };
+    window.addEventListener("pointerdown", handlePointerDown);
+    return () => {
+      window.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [activeCloudId]);
 
   useMotionValueEvent(freefallProgress, "change", (value) => {
     const v = Math.max(0, Math.min(1, value));
@@ -265,16 +455,102 @@ export function FreefallSection({
             <div className="absolute left-[84%] top-[12%] h-1 w-1 rounded-full bg-[#E3EDF8]/75" />
           </>
         )}
-        <div className="cloud c1" />
-        <div className="cloud c2" />
-        <div className="cloud c3" />
-        <div className="bird" />
+        <div className="absolute inset-0 z-10">
+          {cloudData.map((cloud) => {
+            const isNoteCloud = cloud.note !== null;
+            const isActiveCloud = activeCloudId === cloud.id;
+            const tone = getCloudTone(isDark, cloud.toneIndex, isNoteCloud);
+            return (
+              <div
+                key={cloud.id}
+                className={`freefall-cloud-track absolute left-0 ${
+                  noteCloudsPaused && isNoteCloud ? "is-paused" : ""
+                } ${isNoteCloud ? "note-cloud-track pointer-events-auto" : "pointer-events-none"}`}
+                style={
+                  {
+                    top: `${cloud.top}%`,
+                    "--cloud-duration": `${cloud.duration}s`,
+                    "--cloud-delay": `${cloud.delay}s`,
+                  } as CSSProperties
+                }
+              >
+                <div
+                  className={`relative ${noteCloudsPaused && isNoteCloud ? "is-paused" : ""}`}
+                  style={
+                    {
+                      "--cloud-bob-duration": `${cloud.bobDuration}s`,
+                    } as CSSProperties
+                  }
+                >
+                  <div
+                    data-note-cloud-shell={isNoteCloud ? "true" : undefined}
+                    className={
+                      isNoteCloud
+                        ? "pointer-events-auto -mx-3 -mt-7 px-3 pt-7"
+                        : "pointer-events-none"
+                    }
+                    onPointerDown={(event) => {
+                      if (!isNoteCloud) return;
+                      event.stopPropagation();
+                      setActiveCloudId(cloud.id);
+                    }}
+                    onClick={() => {
+                      if (!isNoteCloud) return;
+                      setActiveCloudId(cloud.id);
+                    }}
+                  >
+                    <button
+                      type="button"
+                      data-note-cloud={isNoteCloud ? "true" : undefined}
+                      className={`freefall-cloud cloud-anchor relative shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_8px_16px_rgba(11,23,35,0.16)] ${
+                        tone.cloud
+                      } ${isNoteCloud ? "cursor-pointer pointer-events-auto" : "pointer-events-none"}`}
+                      style={
+                        {
+                          "--cloud-width": `${cloud.width}px`,
+                          "--cloud-size-lg": `${cloud.largePuffSize}px`,
+                          "--cloud-size-sm": `${cloud.smallPuffSize}px`,
+                          "--cloud-offset": `${cloud.horizontalOffset}%`,
+                        } as CSSProperties
+                      }
+                      aria-label={
+                        isNoteCloud
+                          ? "Open community note preview"
+                          : "Ambient cloud"
+                      }
+                    >
+                      {isNoteCloud && (
+                        <span className="absolute right-2.5 top-2 h-2.5 w-2.5 rounded-full bg-[#59A96A] shadow-[0_0_8px_rgba(89,169,106,0.75)]" />
+                      )}
+                    </button>
+
+                    <AnimatePresence>
+                      {isActiveCloud && cloud.note && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 6, scale: 0.98 }}
+                          transition={{ duration: 0.22, ease: "easeOut" }}
+                          className={`pointer-events-none absolute left-1/2 top-[calc(100%+0.35rem)] z-40 w-56 -translate-x-1/2 rounded-md border px-2.5 py-2 text-left shadow-md backdrop-blur ${tone.toast} ${tone.toastText}`}
+                        >
+                          <p className="text-annotation-script text-xs leading-snug">
+                            {compactNoteText(cloud.note)}
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </motion.div>
 
       {/* Sticky scene so content stays in view while scrolling the freefall range */}
       <motion.div
         style={{ opacity: freefallOpacity }}
-        className="pointer-events-auto sticky top-0 z-10 flex h-screen w-full flex-col items-center justify-center gap-8 px-4"
+        className="pointer-events-none sticky top-0 z-20 flex h-screen w-full flex-col items-center justify-center gap-8 px-4"
       >
         <ParachuteCompanion
           stage="freefall"
@@ -288,7 +564,7 @@ export function FreefallSection({
             isDark
               ? "border border-white/18 bg-[#0B1620]/78"
               : "border border-[#3B413C]/12 bg-white/85"
-          }`}
+          } pointer-events-auto`}
         >
           <span
             className={`text-sm font-medium ${
@@ -305,7 +581,7 @@ export function FreefallSection({
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
-          className="mt-4 w-full max-w-5xl"
+          className="pointer-events-auto mt-4 w-full max-w-5xl"
         >
           {activeBand === "experience" && (
             <ExperiencePanel experience={experienceItems} theme={theme} />
@@ -319,18 +595,6 @@ export function FreefallSection({
         </motion.div>
       </motion.div>
 
-      {/* USER NOTES (Atmospheric Litter) */}
-      {userNotes.map((note) => (
-        <FallingObject
-          key={note.id}
-          id={note.id}
-          content={
-            note.author ? `${note.message} — ${note.author}` : note.message
-          }
-          progress={freefallProgress}
-          theme={theme}
-        />
-      ))}
     </div>
   );
 }
@@ -753,34 +1017,6 @@ function ProjectsPanel({
   );
 }
 
-function FallingObject({ id, content, progress, theme }: FallingObjectProps) {
-  const isDark = theme === "dark";
-  const [startX] = useState(() => Math.random() * 80 + 10); // 10% to 90%
-  const [rotation] = useState(() => Math.random() * 360);
-  const [endY] = useState(() => Math.random() * 200 - 100);
-
-  const y = useTransform(progress, [0, 0.9, 1], [2000, -5000, endY]);
-
-  return (
-    <motion.div
-      layoutId={`note-${id}`}
-      style={{ y, left: `${startX}%`, rotate: rotation }}
-      className={`absolute z-10 w-32 transform-gpu rounded-md border p-3 shadow-md ${
-        isDark
-          ? "border-[#F19A3E]/70 bg-[#10202D] text-[#EAF2F8]"
-          : "border-[#F19A3E] bg-[#F5F5F5] text-[#3B413C]"
-      }`}
-    >
-      <p
-        className={`text-annotation-script text-xs leading-tight ${
-          isDark ? "text-[#DCE8F1]" : "text-[#3B413C]"
-        }`}
-      >
-        "{content}"
-      </p>
-    </motion.div>
-  );
-}
 function ExperiencePanel({
   experience,
   theme,

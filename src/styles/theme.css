@@ -370,6 +370,93 @@
     }
   }
 
+  @keyframes freefallCloudDrift {
+    0% {
+      transform: translate3d(-340px, 0, 0);
+    }
+    100% {
+      transform: translate3d(calc(100vw + 380px), 0, 0);
+    }
+  }
+
+  @keyframes freefallCloudBob {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    25% {
+      transform: translate3d(0, -5px, 0);
+    }
+    50% {
+      transform: translate3d(0, -2px, 0);
+    }
+    75% {
+      transform: translate3d(0, 4px, 0);
+    }
+  }
+
+  .freefall-cloud-track {
+    animation-name: freefallCloudDrift;
+    animation-duration: var(--cloud-duration, 52s);
+    animation-timing-function: linear;
+    animation-delay: var(--cloud-delay, 0s);
+    animation-iteration-count: infinite;
+    transform: translate3d(-340px, 0, 0);
+    will-change: transform;
+  }
+
+  .freefall-cloud {
+    animation-name: freefallCloudBob;
+    animation-duration: var(--cloud-bob-duration, 9s);
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    will-change: transform;
+  }
+
+  .freefall-cloud-track.is-paused,
+  .freefall-cloud.is-paused {
+    animation-play-state: paused;
+  }
+
+  .freefall-cloud-track.note-cloud-track:hover,
+  .freefall-cloud-track.note-cloud-track:hover .freefall-cloud {
+    animation-play-state: paused;
+  }
+
+  .cloud-anchor {
+    width: var(--cloud-width, 140px);
+    height: 40px;
+    border-radius: 50px;
+    position: relative;
+    isolation: isolate;
+  }
+
+  .cloud-anchor::after {
+    content: "";
+    position: absolute;
+    width: var(--cloud-size-lg, 54px);
+    height: var(--cloud-size-lg, 54px);
+    bottom: 20%;
+    right: calc(20% + var(--cloud-offset, 0%));
+    border-radius: 50%;
+    background: inherit;
+    border: inherit;
+    z-index: -1;
+  }
+
+  .cloud-anchor::before {
+    content: "";
+    position: absolute;
+    width: var(--cloud-size-sm, 38px);
+    height: var(--cloud-size-sm, 38px);
+    bottom: 10%;
+    left: calc(15% - var(--cloud-offset, 0%));
+    border-radius: 50%;
+    background: inherit;
+    border: inherit;
+    z-index: -1;
+  }
+
   .cloud {
     position: absolute;
     width: 120px;
