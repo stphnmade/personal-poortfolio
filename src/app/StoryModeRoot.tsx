@@ -105,7 +105,12 @@ export function StoryModeRoot({
             style={{ opacity: landingOpacity }}
           >
             <div className="pointer-events-auto flex h-full w-full items-end">
-              <BeachLanding projects={freefallProjects} userNotes={notes} theme={theme} />
+              <BeachLanding
+                projects={freefallProjects}
+                userNotes={notes}
+                theme={theme}
+                onOpenNote={() => setIsModalOpen(true)}
+              />
             </div>
           </motion.div>
         )}

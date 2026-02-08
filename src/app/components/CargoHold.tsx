@@ -244,23 +244,23 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
           <div
             className={`absolute inset-y-0 left-0 ${
               isDark
-                ? "bg-[linear-gradient(90deg,#0A1118_0%,#121E29_45%,#162534_100%)]"
-                : "bg-[linear-gradient(90deg,#D7E0E8_0%,#CFDAE5_45%,#C0CEDD_100%)]"
+                ? "bg-[linear-gradient(90deg,#050608_0%,#0B0E12_45%,#171C24_100%)]"
+                : "bg-[linear-gradient(90deg,#1C1F25_0%,#252A31_45%,#2F363F_100%)]"
             }`}
             style={{ right: curtainPanelWidth }}
           >
             <div
               className={`absolute inset-0 ${
                 isDark
-                  ? "bg-[repeating-linear-gradient(90deg,rgba(255,255,255,0.09)_0,rgba(255,255,255,0.09)_2px,rgba(0,0,0,0.04)_2px,rgba(0,0,0,0.04)_16px)]"
-                  : "bg-[repeating-linear-gradient(90deg,rgba(255,255,255,0.42)_0,rgba(255,255,255,0.42)_2px,rgba(60,84,104,0.10)_2px,rgba(60,84,104,0.10)_14px)]"
+                  ? "bg-[repeating-linear-gradient(90deg,rgba(255,255,255,0.06)_0,rgba(255,255,255,0.06)_1px,rgba(0,0,0,0.18)_1px,rgba(0,0,0,0.18)_9px),radial-gradient(circle_at_18%_34%,rgba(255,255,255,0.12)_0,transparent_40%),radial-gradient(circle_at_70%_68%,rgba(255,255,255,0.06)_0,transparent_42%)]"
+                  : "bg-[repeating-linear-gradient(90deg,rgba(255,255,255,0.08)_0,rgba(255,255,255,0.08)_1px,rgba(0,0,0,0.22)_1px,rgba(0,0,0,0.22)_9px),radial-gradient(circle_at_20%_28%,rgba(255,255,255,0.12)_0,transparent_38%),radial-gradient(circle_at_72%_70%,rgba(255,255,255,0.07)_0,transparent_40%)]"
               }`}
             />
             <div
               className={`absolute inset-y-0 right-0 w-8 ${
                 isDark
-                  ? "bg-[linear-gradient(90deg,transparent_0%,rgba(0,0,0,0.45)_100%)]"
-                  : "bg-[linear-gradient(90deg,transparent_0%,rgba(51,65,85,0.22)_100%)]"
+                  ? "bg-[linear-gradient(90deg,transparent_0%,rgba(0,0,0,0.62)_100%)]"
+                  : "bg-[linear-gradient(90deg,transparent_0%,rgba(0,0,0,0.56)_100%)]"
               }`}
             />
           </div>
@@ -276,7 +276,7 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
             />
             <div
               className={`absolute left-0 top-1/2 h-28 w-4 -translate-y-1/2 rounded-r-full ${
-                isDark ? "bg-[#1B242C]" : "bg-[#9AA8B6]"
+                isDark ? "bg-[#1B2128]" : "bg-[#676D76]"
               } shadow-inner`}
             />
           </div>
