@@ -349,6 +349,27 @@
     }
   }
 
+  @keyframes cargoCurtainReveal {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-118vw);
+    }
+  }
+
+  @keyframes cargoDollyReveal {
+    0% {
+      transform: scale(1.06);
+    }
+    45% {
+      transform: scale(1.06);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
   .cloud {
     position: absolute;
     width: 120px;

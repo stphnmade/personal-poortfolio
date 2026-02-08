@@ -12,7 +12,6 @@ import { FreefallSection } from '@/app/components/FreefallSection'
 import { BeachLanding } from '@/app/components/BeachLanding'
 import { DropNoteModal } from '@/app/components/DropNoteModal'
 import { PrimaryCTAButton } from '@/app/components/PrimaryCTAButton'
-import { SkyCanvas } from '@/app/components/SkyCanvas'
 import { CHAPTERS, getChapterForProgress, type ChapterId } from '@/constants/chapters'
 import { SUBSTANCE } from '@/constants/substance'
 
@@ -28,13 +27,14 @@ interface StoryModeRootProps {
 }
 
 const LANDING_CHAPTER = CHAPTERS.find((c) => c.id === 'landing')!
+const EXPERIENCE_CHAPTER = CHAPTERS.find((c) => c.id === 'experience')!
 export function StoryModeRoot({
   theme,
   onActiveChapterChange,
 }: StoryModeRootProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [notes, setNotes] = useState<Note[]>([])
-  const [isInLanding, setIsInLanding] = useState(false)
+  const [activeScene, setActiveScene] = useState<'cargo' | 'freefall' | 'landing'>('cargo')
   const activeChapterRef = useRef<ChapterId | null>(null)
   const noteCopy = SUBSTANCE.story.globalUI.noteDrop
 
@@ -56,13 +56,13 @@ export function StoryModeRoot({
       activeChapterRef.current = chapter.id
       onActiveChapterChange?.(chapter.id)
     }
-    const range = LANDING_CHAPTER.end - LANDING_CHAPTER.start
-    const raw = (latest - LANDING_CHAPTER.start) / range
-    const clamped = Math.max(0, Math.min(1, raw))
-    // Once we are meaningfully into the landing chapter,
-    // unmount the freefall overlay so clicks reach the beach crates.
-    const nextInLanding = clamped > 0.15
-    setIsInLanding((prev) => (prev === nextInLanding ? prev : nextInLanding))
+    const nextScene =
+      latest < EXPERIENCE_CHAPTER.start
+        ? 'cargo'
+        : latest < LANDING_CHAPTER.start
+        ? 'freefall'
+        : 'landing'
+    setActiveScene((prev) => (prev === nextScene ? prev : nextScene))
   })
 
   const handleDropNote = (message: string, author: string) => {
@@ -88,27 +88,27 @@ export function StoryModeRoot({
     <div className="relative h-[800vh] bg-background">
       {/* Global story viewport */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        <SkyCanvas scrollYProgress={scrollYProgress} />
-        {/* Cargo Hold / Doors / Freefall are handled inside these components based on progress */}
-        <CargoHold
-          scrollYProgress={scrollYProgress}
-          theme={theme}
-        />
-        {!isInLanding && (
+        {activeScene === 'cargo' && (
+          <CargoHold scrollYProgress={scrollYProgress} theme={theme} />
+        )}
+        {activeScene === 'freefall' && (
           <FreefallSection
             scrollYProgress={scrollYProgress}
             userNotes={notes}
+            theme={theme}
             onOpenNote={() => setIsModalOpen(true)}
           />
         )}
-        <motion.div
-          className="absolute inset-0 flex items-end justify-center pointer-events-none"
-          style={{ opacity: landingOpacity }}
-        >
-          <div className="pointer-events-auto flex h-full w-full items-end">
-            <BeachLanding projects={freefallProjects} userNotes={notes} />
-          </div>
-        </motion.div>
+        {activeScene === 'landing' && (
+          <motion.div
+            className="absolute inset-0 flex items-end justify-center pointer-events-none"
+            style={{ opacity: landingOpacity }}
+          >
+            <div className="pointer-events-auto flex h-full w-full items-end">
+              <BeachLanding projects={freefallProjects} userNotes={notes} theme={theme} />
+            </div>
+          </motion.div>
+        )}
       </div>
 
       {/* Fixed CTA for notes */}

@@ -4,6 +4,7 @@ interface SupplyCrateProps {
   title: string
   accentColor: string
   note: string
+  theme?: 'dark' | 'light'
   className?: string
   onClick?: () => void
 }
@@ -12,40 +13,61 @@ export function SupplyCrate({
   title,
   accentColor,
   note,
+  theme = 'dark',
   className,
   onClick,
 }: SupplyCrateProps) {
+  const isDark = theme === 'dark'
+
   return (
-    <div
+    <button
+      type="button"
       onClick={onClick}
       className={`
-        relative h-48 w-64 cursor-pointer border-4 border-[#3B413C] bg-[#3B413C]
-        flex flex-col items-center justify-center
-        shadow-[8px_8px_0px_0px_rgba(0,0,0,0.2)]
-        transition-transform hover:scale-105 active:scale-95
+        group relative h-52 w-64 cursor-pointer border-0 bg-transparent p-0
+        transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98]
+        [perspective:1000px]
         ${className ?? ''}
       `}
     >
-      {/* Structural reinforcement */}
-      <div className="pointer-events-none absolute inset-2 border-2 border-dashed border-[#F5F5F5]/20" />
+      <div
+        className={`pointer-events-none absolute left-6 right-2 top-3 h-9 [transform:skewX(-34deg)] rounded-t-md border ${
+          isDark ? 'border-black/30 bg-[#5A432C]' : 'border-[#8A6A44]/50 bg-[#C49B6A]'
+        }`}
+      />
+      <div
+        className={`pointer-events-none absolute bottom-3 left-1 top-10 w-8 [transform:skewY(-36deg)] rounded-l-md border ${
+          isDark ? 'border-black/30 bg-[#402E1D]' : 'border-[#8A6A44]/50 bg-[#A97D50]'
+        }`}
+      />
 
-      {/* Label */}
-      <h3
-        className="font-sans text-3xl font-black tracking-tight"
-        style={{ color: accentColor }}
+      <div
+        className={`relative ml-8 mt-10 flex h-[74%] w-[86%] flex-col items-center justify-center rounded-md border-2 ${
+          isDark
+            ? 'border-[#2A1E13] bg-[linear-gradient(180deg,#6C4F33_0%,#5A422C_44%,#4A3522_100%)]'
+            : 'border-[#8A6A44] bg-[linear-gradient(180deg,#D0A878_0%,#C09461_44%,#A97D50_100%)]'
+        } shadow-[14px_16px_26px_rgba(0,0,0,0.28)]`}
       >
-        {title}
-      </h3>
+        <div className={`absolute inset-3 border ${isDark ? 'border-[#EADBC8]/14' : 'border-white/30'}`} />
+        <div className={`absolute inset-x-3 top-[44%] h-px ${isDark ? 'bg-[#2A1E13]/65' : 'bg-[#8A6A44]/55'}`} />
+        <h3
+          className="relative z-10 font-sans text-3xl font-black tracking-tight"
+          style={{ color: accentColor }}
+        >
+          {title}
+        </h3>
 
-      {/* Side handles */}
-      <div className="absolute -left-2 top-1/2 h-10 w-2 -translate-y-1/2 rounded-sm bg-[#3B413C]" />
-      <div className="absolute -right-2 top-1/2 h-10 w-2 -translate-y-1/2 rounded-sm bg-[#3B413C]" />
+        <div className={`absolute left-2 top-1/2 h-11 w-2 -translate-y-1/2 rounded-sm ${isDark ? 'bg-[#2A1E13]/80' : 'bg-[#8A6A44]/75'}`} />
+        <div className={`absolute right-2 top-1/2 h-11 w-2 -translate-y-1/2 rounded-sm ${isDark ? 'bg-[#2A1E13]/80' : 'bg-[#8A6A44]/75'}`} />
+      </div>
 
-      {/* Script annotation */}
-      <span className="absolute -bottom-4 -right-2 rotate-3 bg-white px-2 py-1 text-sm font-normal text-[#DD403A] shadow-sm">
+      <span
+        className={`absolute -bottom-2 right-0 rotate-2 px-2 py-1 text-sm font-normal shadow-sm ${
+          isDark ? 'bg-[#F2E7D9] text-[#AF3A34]' : 'bg-white text-[#DD403A]'
+        }`}
+      >
         {note}
       </span>
-    </div>
+    </button>
   )
 }
-

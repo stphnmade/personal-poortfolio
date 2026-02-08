@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   motion,
   useTransform,
   type MotionValue,
 } from "motion/react";
 import { CHAPTERS } from "@/constants/chapters";
-import cargoLeft from "@/app/assets/Cargo_left.png";
+import cargoLeftDoor from "@/app/assets/Cargo_leftdoor.png";
+import { ParachuteCompanion } from "@/app/components/ParachuteCompanion";
 
 interface CargoHoldProps {
   scrollYProgress: MotionValue<number>;
@@ -28,8 +29,9 @@ const STAR_POSITIONS = [
 export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
   const about = CHAPTERS.find((c) => c.id === "about")!;
   const experience = CHAPTERS.find((c) => c.id === "experience")!;
-  const [hasDoorFinished, setHasDoorFinished] = useState(false);
   const isDark = theme === "dark";
+  const curtainPanelWidth = "min(40vw, 620px)";
+  const [playIntroCurtain, setPlayIntroCurtain] = useState(false);
   const heroProjectBullets = [
     "Dear Days, collaborative family calendar platform focused on shared memories and connection",
     "Storybot, Reddit-to-video automation workflow for scripting, voiceover, editing, and delivery",
@@ -42,6 +44,29 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
     [about.start, experience.start - 0.02, experience.start],
     [1, 1, 0],
   );
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const playedKey = "story-cargo-curtain-intro-v1";
+    const activeKey = "story-cargo-curtain-intro-active-v1";
+    const isActive = window.sessionStorage.getItem(activeKey) === "active";
+    const alreadyPlayed = window.sessionStorage.getItem(playedKey) === "played";
+
+    if (!isActive && alreadyPlayed) return;
+
+    setPlayIntroCurtain(true);
+
+    if (!isActive && !alreadyPlayed) {
+      window.sessionStorage.setItem(playedKey, "played");
+      window.sessionStorage.setItem(activeKey, "active");
+    }
+
+    const clearActiveTimer = window.setTimeout(() => {
+      window.sessionStorage.removeItem(activeKey);
+    }, 6600);
+
+    return () => window.clearTimeout(clearActiveTimer);
+  }, []);
 
   return (
     <motion.div
@@ -87,7 +112,13 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
             isDark ? "bg-white/20" : "bg-[#3B413C]/25"
           }`}
         />
-        <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl items-center px-6 lg:px-10">
+        <div
+          className={`relative z-10 mx-auto flex h-full w-full max-w-7xl items-center px-6 lg:px-10 ${
+            playIntroCurtain
+              ? "animate-[cargoDollyReveal_6.6s_cubic-bezier(0.16,1,0.3,1)_forwards]"
+              : ""
+          }`}
+        >
           <div className="grid w-full gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
             <section className="space-y-5">
               <span
@@ -202,25 +233,54 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
         </div>
       </div>
 
-      {!hasDoorFinished && (
-        <motion.div
-          initial={{ x: "100vw" }}
-          animate={{ x: "-160vw" }}
-          transition={{
-            duration: 3,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          onAnimationComplete={() => setHasDoorFinished(true)}
-          className="pointer-events-none absolute inset-y-0 right-0 z-20 flex w-[58vw] justify-end"
-        >
-          <img
-            src={cargoLeft}
-            alt=""
-            className="h-full w-full select-none object-contain"
-            draggable={false}
-          />
-          <div className="absolute right-6 top-1/2 h-24 w-3 -translate-y-1/2 rounded-full bg-[#1B242C] shadow-inner" />
-        </motion.div>
+      <ParachuteCompanion
+        stage="cargo"
+        theme={theme}
+        className="pointer-events-none absolute left-[64%] top-[18%] z-[15] hidden md:block"
+      />
+
+      {playIntroCurtain && (
+        <div className="pointer-events-none absolute inset-0 z-20 animate-[cargoCurtainReveal_3.6s_cubic-bezier(0.16,1,0.3,1)_3s_forwards]">
+          <div
+            className={`absolute inset-y-0 left-0 ${
+              isDark
+                ? "bg-[linear-gradient(90deg,#0A1118_0%,#121E29_45%,#162534_100%)]"
+                : "bg-[linear-gradient(90deg,#D7E0E8_0%,#CFDAE5_45%,#C0CEDD_100%)]"
+            }`}
+            style={{ right: curtainPanelWidth }}
+          >
+            <div
+              className={`absolute inset-0 ${
+                isDark
+                  ? "bg-[repeating-linear-gradient(90deg,rgba(255,255,255,0.09)_0,rgba(255,255,255,0.09)_2px,rgba(0,0,0,0.04)_2px,rgba(0,0,0,0.04)_16px)]"
+                  : "bg-[repeating-linear-gradient(90deg,rgba(255,255,255,0.42)_0,rgba(255,255,255,0.42)_2px,rgba(60,84,104,0.10)_2px,rgba(60,84,104,0.10)_14px)]"
+              }`}
+            />
+            <div
+              className={`absolute inset-y-0 right-0 w-8 ${
+                isDark
+                  ? "bg-[linear-gradient(90deg,transparent_0%,rgba(0,0,0,0.45)_100%)]"
+                  : "bg-[linear-gradient(90deg,transparent_0%,rgba(51,65,85,0.22)_100%)]"
+              }`}
+            />
+          </div>
+          <div
+            className="absolute inset-y-0 right-0 overflow-hidden"
+            style={{ width: curtainPanelWidth }}
+          >
+            <img
+              src={cargoLeftDoor}
+              alt=""
+              className="h-full w-full select-none object-cover object-right"
+              draggable={false}
+            />
+            <div
+              className={`absolute left-0 top-1/2 h-28 w-4 -translate-y-1/2 rounded-r-full ${
+                isDark ? "bg-[#1B242C]" : "bg-[#9AA8B6]"
+              } shadow-inner`}
+            />
+          </div>
+        </div>
       )}
     </motion.div>
   );

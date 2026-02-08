@@ -50,9 +50,11 @@ import {
 } from "react-icons/si";
 import { CHAPTERS } from "@/constants/chapters";
 import { SUBSTANCE } from "@/constants/substance";
+import { ParachuteCompanion } from "@/app/components/ParachuteCompanion";
 
 interface FreefallSectionProps {
   scrollYProgress: MotionValue<number>;
+  theme: "dark" | "light";
   userNotes: {
     id: string;
     message: string;
@@ -65,6 +67,7 @@ interface FallingObjectProps {
   id: string;
   content: string;
   progress: MotionValue<number>;
+  theme: "dark" | "light";
 }
 
 const EXPERIENCE = CHAPTERS.find((c) => c.id === "experience")!;
@@ -189,9 +192,11 @@ function renderTechIcon(label: string, sizeClass = "h-3.5 w-3.5") {
 
 export function FreefallSection({
   scrollYProgress,
+  theme,
   userNotes,
   onOpenNote: _onOpenNote,
 }: FreefallSectionProps) {
+  const isDark = theme === "dark";
   const freefallProgress = useTransform(
     scrollYProgress,
     [FREEFALL_START_PROGRESS, FREEFALL_END_PROGRESS],
@@ -236,18 +241,34 @@ export function FreefallSection({
     // Absolute full-screen layer that sits between the cargo doors and the beach.
     <div className="pointer-events-none absolute inset-0 overflow-visible">
       {/* Animated sky background, fades in/out over the cargo hold as you enter freefall */}
-      <motion.div className="sky-scene" style={{ opacity: freefallOpacity }}>
+      <motion.div
+        className={`absolute inset-0 overflow-hidden ${
+          isDark
+            ? "bg-[linear-gradient(180deg,#020A14_0%,#061327_40%,#0D2238_72%,#153147_100%)]"
+            : "bg-[linear-gradient(180deg,#CFE6FF_0%,#B9D9FA_40%,#A6CCF5_68%,#DDEEFF_100%)]"
+        }`}
+        style={{ opacity: freefallOpacity }}
+      >
+        <div
+          className={`absolute inset-0 ${
+            isDark
+              ? "bg-[radial-gradient(circle_at_20%_22%,rgba(89,169,106,0.18)_0,transparent_40%),radial-gradient(circle_at_76%_30%,rgba(241,154,62,0.10)_0,transparent_34%)]"
+              : "bg-[radial-gradient(circle_at_18%_18%,rgba(255,255,255,0.45)_0,transparent_42%),radial-gradient(circle_at_82%_28%,rgba(255,255,255,0.35)_0,transparent_34%)]"
+          }`}
+        />
+        {isDark && (
+          <>
+            <div className="absolute left-[10%] top-[14%] h-1 w-1 rounded-full bg-[#E3EDF8]/80" />
+            <div className="absolute left-[28%] top-[22%] h-1.5 w-1.5 rounded-full bg-[#E3EDF8]/75" />
+            <div className="absolute left-[46%] top-[10%] h-1 w-1 rounded-full bg-[#E3EDF8]/70" />
+            <div className="absolute left-[72%] top-[24%] h-1.5 w-1.5 rounded-full bg-[#E3EDF8]/70" />
+            <div className="absolute left-[84%] top-[12%] h-1 w-1 rounded-full bg-[#E3EDF8]/75" />
+          </>
+        )}
         <div className="cloud c1" />
         <div className="cloud c2" />
         <div className="cloud c3" />
         <div className="bird" />
-        <div className="skydiver-container">
-          <div className="drogue-chute" />
-          <div className="person-group">
-            <div className="head" />
-            <div className="body-suit" />
-          </div>
-        </div>
       </motion.div>
 
       {/* Sticky scene so content stays in view while scrolling the freefall range */}
@@ -255,9 +276,25 @@ export function FreefallSection({
         style={{ opacity: freefallOpacity }}
         className="pointer-events-auto sticky top-0 z-10 flex h-screen w-full flex-col items-center justify-center gap-8 px-4"
       >
+        <ParachuteCompanion
+          stage="freefall"
+          theme={theme}
+          className="pointer-events-none absolute right-[8%] top-[18%] z-20 hidden md:block"
+        />
+
         {/* Freefall heading */}
-        <div className="rounded-full bg-white/85 px-4 py-2 shadow-sm backdrop-blur">
-          <span className="text-sm font-medium text-[#3B413C]">
+        <div
+          className={`rounded-full px-4 py-2 shadow-sm backdrop-blur ${
+            isDark
+              ? "border border-white/18 bg-[#0B1620]/78"
+              : "border border-[#3B413C]/12 bg-white/85"
+          }`}
+        >
+          <span
+            className={`text-sm font-medium ${
+              isDark ? "text-[#E5EFF6]" : "text-[#3B413C]"
+            }`}
+          >
             {SUBSTANCE.story.freefall.subheadline}
           </span>
         </div>
@@ -271,11 +308,13 @@ export function FreefallSection({
           className="mt-4 w-full max-w-5xl"
         >
           {activeBand === "experience" && (
-            <ExperiencePanel experience={experienceItems} />
+            <ExperiencePanel experience={experienceItems} theme={theme} />
           )}
-          {activeBand === "skills" && <SkillsPanel skills={skillGroups} />}
+          {activeBand === "skills" && (
+            <SkillsPanel skills={skillGroups} theme={theme} />
+          )}
           {activeBand === "projects" && (
-            <ProjectsPanel projects={projectItems} />
+            <ProjectsPanel projects={projectItems} theme={theme} />
           )}
         </motion.div>
       </motion.div>
@@ -289,13 +328,21 @@ export function FreefallSection({
             note.author ? `${note.message} — ${note.author}` : note.message
           }
           progress={freefallProgress}
+          theme={theme}
         />
       ))}
     </div>
   );
 }
 
-function SkillsPanel({ skills }: { skills: typeof SUBSTANCE.skillsAndCerts }) {
+function SkillsPanel({
+  skills,
+  theme,
+}: {
+  skills: typeof SUBSTANCE.skillsAndCerts;
+  theme: "dark" | "light";
+}) {
+  const isDark = theme === "dark";
   const [index, setIndex] = useState(0);
   const total = skills.length;
   const current = skills[index];
@@ -328,15 +375,29 @@ function SkillsPanel({ skills }: { skills: typeof SUBSTANCE.skillsAndCerts }) {
   };
 
   return (
-    <div className="flex w-full items-stretch rounded-2xl border-2 border-[#3B413C]/10 bg-white/95 p-6 shadow-xl backdrop-blur-md">
-      <div className="mr-4 flex flex-col items-center justify-center gap-2 border-r border-[#E5E7EB] pr-4">
+    <div
+      className={`flex w-full items-stretch rounded-2xl border-2 p-6 shadow-xl backdrop-blur-md ${
+        isDark
+          ? "border-white/15 bg-[#0F1D29]/88"
+          : "border-[#3B413C]/10 bg-white/95"
+      }`}
+    >
+      <div
+        className={`mr-4 flex flex-col items-center justify-center gap-2 border-r pr-4 ${
+          isDark ? "border-white/15" : "border-[#E5E7EB]"
+        }`}
+      >
         {currentIcon}
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6B7280]">
+        <span
+          className={`text-xs font-semibold uppercase tracking-[0.2em] ${
+            isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"
+          }`}
+        >
           Skills
         </span>
       </div>
       <div className="flex-1">
-        <h2 className="text-h2-sans text-[#111827]">
+        <h2 className={`text-h2-sans ${isDark ? "text-[#EAF2F8]" : "text-[#111827]"}`}>
           {SUBSTANCE.story.freefall.skillsIntro}
         </h2>
         <AnimatePresence mode="wait">
@@ -347,14 +408,18 @@ function SkillsPanel({ skills }: { skills: typeof SUBSTANCE.skillsAndCerts }) {
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
-            <p className="mt-2 text-sm font-semibold text-[#111827]">
+            <p className={`mt-2 text-sm font-semibold ${isDark ? "text-[#DDE8F0]" : "text-[#111827]"}`}>
               {current.title}
             </p>
-            <ul className="mt-3 flex flex-wrap gap-2 text-sm text-[#4B5563]">
+            <ul className={`mt-3 flex flex-wrap gap-2 text-sm ${isDark ? "text-[#C4D2DD]" : "text-[#4B5563]"}`}>
               {current.items.map((item) => (
                 <li
                   key={item}
-                  className="inline-flex items-center gap-1 rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-1"
+                  className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 ${
+                    isDark
+                      ? "border-white/15 bg-[#162736]"
+                      : "border-[#E5E7EB] bg-[#F9FAFB]"
+                  }`}
                 >
                   {renderSkillIcon(item)}
                   {item}
@@ -364,23 +429,31 @@ function SkillsPanel({ skills }: { skills: typeof SUBSTANCE.skillsAndCerts }) {
           </motion.div>
         </AnimatePresence>
       </div>
-      <div className="ml-4 flex w-20 flex-col items-center justify-center gap-2 text-xs text-[#4B5563]">
+      <div className={`ml-4 flex w-20 flex-col items-center justify-center gap-2 text-xs ${isDark ? "text-[#AFC0CD]" : "text-[#4B5563]"}`}>
         <button
           onClick={goPrev}
           type="button"
           aria-label="Previous skills group"
-          className="rounded-full bg-[#F5F5F5] px-3 py-1 transition-colors duration-200 hover:bg-[#E5E7EB]"
+          className={`rounded-full px-3 py-1 transition-colors duration-200 ${
+            isDark
+              ? "bg-[#1A2C3A] text-[#DDE8F0] hover:bg-[#203648]"
+              : "bg-[#F5F5F5] hover:bg-[#E5E7EB]"
+          }`}
         >
           ◀
         </button>
-        <span className="font-medium text-[#111827]">
+        <span className={`font-medium ${isDark ? "text-[#EAF2F8]" : "text-[#111827]"}`}>
           {index + 1}/{total}
         </span>
         <button
           onClick={goNext}
           type="button"
           aria-label="Next skills group"
-          className="rounded-full bg-[#F5F5F5] px-3 py-1 transition-colors duration-200 hover:bg-[#E5E7EB]"
+          className={`rounded-full px-3 py-1 transition-colors duration-200 ${
+            isDark
+              ? "bg-[#1A2C3A] text-[#DDE8F0] hover:bg-[#203648]"
+              : "bg-[#F5F5F5] hover:bg-[#E5E7EB]"
+          }`}
         >
           ▶
         </button>
@@ -389,7 +462,14 @@ function SkillsPanel({ skills }: { skills: typeof SUBSTANCE.skillsAndCerts }) {
   );
 }
 
-function ProjectsPanel({ projects }: { projects: typeof SUBSTANCE.projects }) {
+function ProjectsPanel({
+  projects,
+  theme,
+}: {
+  projects: typeof SUBSTANCE.projects;
+  theme: "dark" | "light";
+}) {
+  const isDark = theme === "dark";
   const [index, setIndex] = useState(0);
   const [mediaIndex, setMediaIndex] = useState(0);
   const total = projects.length;
@@ -432,15 +512,29 @@ function ProjectsPanel({ projects }: { projects: typeof SUBSTANCE.projects }) {
         ];
 
   return (
-    <div className="flex w-full items-stretch rounded-2xl border-2 border-[#3B413C]/10 bg-white/95 p-6 shadow-xl backdrop-blur-md">
-      <div className="mr-4 flex flex-col items-center justify-center gap-2 border-r border-[#E5E7EB] pr-4">
+    <div
+      className={`flex w-full items-stretch rounded-2xl border-2 p-6 shadow-xl backdrop-blur-md ${
+        isDark
+          ? "border-white/15 bg-[#0F1D29]/88"
+          : "border-[#3B413C]/10 bg-white/95"
+      }`}
+    >
+      <div
+        className={`mr-4 flex flex-col items-center justify-center gap-2 border-r pr-4 ${
+          isDark ? "border-white/15" : "border-[#E5E7EB]"
+        }`}
+      >
         <FaProjectDiagram className="h-6 w-6 text-[#DD403A]" />
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6B7280]">
+        <span
+          className={`text-xs font-semibold uppercase tracking-[0.2em] ${
+            isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"
+          }`}
+        >
           Projects
         </span>
       </div>
       <div className="flex-1 space-y-3">
-        <h2 className="text-h2-sans text-[#111827]">
+        <h2 className={`text-h2-sans ${isDark ? "text-[#EAF2F8]" : "text-[#111827]"}`}>
           {SUBSTANCE.story.freefall.toolsIntro}
         </h2>
         <AnimatePresence mode="wait">
@@ -450,10 +544,14 @@ function ProjectsPanel({ projects }: { projects: typeof SUBSTANCE.projects }) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="rounded-2xl border border-[#3B413C]/12 bg-[#F9FAFB] p-4 shadow-md"
+            className={`rounded-2xl border p-4 shadow-md ${
+              isDark
+                ? "border-white/12 bg-[#172838]"
+                : "border-[#3B413C]/12 bg-[#F9FAFB]"
+            }`}
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-sm text-[#6B7280] flex items-center gap-2">
+              <p className={`flex items-center gap-2 text-sm ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
                 <FaCalendarAlt className="h-4 w-4 text-[#F19A3E]" />
                 {current.timeframe}
               </p>
@@ -467,16 +565,16 @@ function ProjectsPanel({ projects }: { projects: typeof SUBSTANCE.projects }) {
             </div>
 
             <div className="mt-2">
-              <p className="text-body-sans font-semibold text-[#111827]">
+              <p className={`text-body-sans font-semibold ${isDark ? "text-[#EAF2F8]" : "text-[#111827]"}`}>
                 {current.name}
               </p>
-              <p className="mt-1 text-sm text-[#4B5563]">{current.tagline}</p>
-              <p className="mt-2 text-xs text-[#6B7280]">{current.status.access}</p>
+              <p className={`mt-1 text-sm ${isDark ? "text-[#C4D2DD]" : "text-[#4B5563]"}`}>{current.tagline}</p>
+              <p className={`mt-2 text-xs ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>{current.status.access}</p>
             </div>
 
             <div className="mt-3">
               <div className="flex items-center justify-between gap-2">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+                <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
                   Quick Look
                 </p>
                 {quickLookCount > 1 && (
@@ -485,18 +583,26 @@ function ProjectsPanel({ projects }: { projects: typeof SUBSTANCE.projects }) {
                       type="button"
                       onClick={goPrevMedia}
                       aria-label="Previous media"
-                      className="rounded-full border border-[#3B413C]/15 bg-white px-2 py-0.5 text-xs text-[#3B413C] transition-colors hover:bg-[#E5E7EB]"
+                      className={`rounded-full border px-2 py-0.5 text-xs transition-colors ${
+                        isDark
+                          ? "border-white/20 bg-[#102130] text-[#DCE8F1] hover:bg-[#1A3347]"
+                          : "border-[#3B413C]/15 bg-white text-[#3B413C] hover:bg-[#E5E7EB]"
+                      }`}
                     >
                       ◀
                     </button>
-                    <span className="text-[11px] text-[#6B7280]">
+                    <span className={`text-[11px] ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
                       {mediaIndex + 1}/{quickLookCount}
                     </span>
                     <button
                       type="button"
                       onClick={goNextMedia}
                       aria-label="Next media"
-                      className="rounded-full border border-[#3B413C]/15 bg-white px-2 py-0.5 text-xs text-[#3B413C] transition-colors hover:bg-[#E5E7EB]"
+                      className={`rounded-full border px-2 py-0.5 text-xs transition-colors ${
+                        isDark
+                          ? "border-white/20 bg-[#102130] text-[#DCE8F1] hover:bg-[#1A3347]"
+                          : "border-[#3B413C]/15 bg-white text-[#3B413C] hover:bg-[#E5E7EB]"
+                      }`}
                     >
                       ▶
                     </button>
@@ -504,7 +610,11 @@ function ProjectsPanel({ projects }: { projects: typeof SUBSTANCE.projects }) {
                 )}
               </div>
 
-              <div className="mt-2 overflow-hidden rounded-xl border border-[#E5E7EB] bg-white">
+              <div
+                className={`mt-2 overflow-hidden rounded-xl border ${
+                  isDark ? "border-white/14 bg-[#0D1B28]" : "border-[#E5E7EB] bg-white"
+                }`}
+              >
                 {activeMedia ? (
                   activeMedia.kind === "image" ? (
                     <img
@@ -546,14 +656,18 @@ function ProjectsPanel({ projects }: { projects: typeof SUBSTANCE.projects }) {
             </div>
 
             <div className="mt-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+              <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
                 Built With
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {current.stack.map((tool) => (
                   <span
                     key={tool}
-                    className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-3 py-1 text-xs text-[#3B413C]"
+                    className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs ${
+                      isDark
+                        ? "border-white/16 bg-[#112333] text-[#DDE8F0]"
+                        : "border-[#E5E7EB] bg-white text-[#3B413C]"
+                    }`}
                   >
                     {renderTechIcon(tool)}
                     <span>{tool}</span>
@@ -563,7 +677,7 @@ function ProjectsPanel({ projects }: { projects: typeof SUBSTANCE.projects }) {
             </div>
 
             <div className="mt-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+              <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
                 Visit
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
@@ -587,29 +701,37 @@ function ProjectsPanel({ projects }: { projects: typeof SUBSTANCE.projects }) {
               </div>
             </div>
 
-            <p className="mt-3 text-xs leading-relaxed text-[#4B5563]">
+            <p className={`mt-3 text-xs leading-relaxed ${isDark ? "text-[#C4D2DD]" : "text-[#4B5563]"}`}>
               {current.impactBullets[0]}
             </p>
           </motion.article>
         </AnimatePresence>
       </div>
-      <div className="ml-4 flex w-20 flex-col items-center justify-center gap-2 text-xs text-[#4B5563]">
+      <div className={`ml-4 flex w-20 flex-col items-center justify-center gap-2 text-xs ${isDark ? "text-[#AFC0CD]" : "text-[#4B5563]"}`}>
         <button
           onClick={goPrev}
           type="button"
           aria-label="Previous project"
-          className="rounded-full bg-[#F5F5F5] px-3 py-1 transition-colors duration-200 hover:bg-[#E5E7EB]"
+          className={`rounded-full px-3 py-1 transition-colors duration-200 ${
+            isDark
+              ? "bg-[#1A2C3A] text-[#DDE8F0] hover:bg-[#203648]"
+              : "bg-[#F5F5F5] hover:bg-[#E5E7EB]"
+          }`}
         >
           ◀
         </button>
-        <span className="font-medium text-[#111827]">
+        <span className={`font-medium ${isDark ? "text-[#EAF2F8]" : "text-[#111827]"}`}>
           {index + 1}/{total}
         </span>
         <button
           onClick={goNext}
           type="button"
           aria-label="Next project"
-          className="rounded-full bg-[#F5F5F5] px-3 py-1 transition-colors duration-200 hover:bg-[#E5E7EB]"
+          className={`rounded-full px-3 py-1 transition-colors duration-200 ${
+            isDark
+              ? "bg-[#1A2C3A] text-[#DDE8F0] hover:bg-[#203648]"
+              : "bg-[#F5F5F5] hover:bg-[#E5E7EB]"
+          }`}
         >
           ▶
         </button>
@@ -631,7 +753,8 @@ function ProjectsPanel({ projects }: { projects: typeof SUBSTANCE.projects }) {
   );
 }
 
-function FallingObject({ id, content, progress }: FallingObjectProps) {
+function FallingObject({ id, content, progress, theme }: FallingObjectProps) {
+  const isDark = theme === "dark";
   const [startX] = useState(() => Math.random() * 80 + 10); // 10% to 90%
   const [rotation] = useState(() => Math.random() * 360);
   const [endY] = useState(() => Math.random() * 200 - 100);
@@ -642,9 +765,17 @@ function FallingObject({ id, content, progress }: FallingObjectProps) {
     <motion.div
       layoutId={`note-${id}`}
       style={{ y, left: `${startX}%`, rotate: rotation }}
-      className="absolute z-10 w-32 transform-gpu rounded-md border border-[#F19A3E] bg-[#F5F5F5] p-3 shadow-md"
+      className={`absolute z-10 w-32 transform-gpu rounded-md border p-3 shadow-md ${
+        isDark
+          ? "border-[#F19A3E]/70 bg-[#10202D] text-[#EAF2F8]"
+          : "border-[#F19A3E] bg-[#F5F5F5] text-[#3B413C]"
+      }`}
     >
-      <p className="text-annotation-script text-xs leading-tight text-[#3B413C]">
+      <p
+        className={`text-annotation-script text-xs leading-tight ${
+          isDark ? "text-[#DCE8F1]" : "text-[#3B413C]"
+        }`}
+      >
         "{content}"
       </p>
     </motion.div>
@@ -652,9 +783,12 @@ function FallingObject({ id, content, progress }: FallingObjectProps) {
 }
 function ExperiencePanel({
   experience,
+  theme,
 }: {
   experience: typeof SUBSTANCE.experience;
+  theme: "dark" | "light";
 }) {
+  const isDark = theme === "dark";
   const parseMonthYear = (value: string) => {
     const [monthRaw, yearRaw] = value.trim().split(/\s+/);
     const year = Number(yearRaw);
@@ -704,24 +838,46 @@ function ExperiencePanel({
   if (!activeExperience) return null;
 
   return (
-    <div className="rounded-2xl border-2 border-[#3B413C]/10 bg-white/95 p-6 shadow-xl backdrop-blur-md">
+    <div
+      className={`rounded-2xl border-2 p-6 shadow-xl backdrop-blur-md ${
+        isDark
+          ? "border-white/15 bg-[#0F1D29]/88"
+          : "border-[#3B413C]/10 bg-white/95"
+      }`}
+    >
       <div className="mb-4 flex items-center gap-2">
         <FaBriefcase className="h-6 w-6 text-[#59A96A]" />
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6B7280]">
+        <span
+          className={`text-xs font-semibold uppercase tracking-[0.2em] ${
+            isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"
+          }`}
+        >
           Experience
         </span>
       </div>
 
-      <h2 className="text-h2-sans text-[#111827]">
+      <h2 className={`text-h2-sans ${isDark ? "text-[#EAF2F8]" : "text-[#111827]"}`}>
         {SUBSTANCE.story.freefall.experienceIntro}
       </h2>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-        <div className="relative rounded-xl border border-[#3B413C]/12 bg-[#F9FAFB] p-4">
-          <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+        <div
+          className={`relative rounded-xl border p-4 ${
+            isDark ? "border-white/14 bg-[#172838]" : "border-[#3B413C]/12 bg-[#F9FAFB]"
+          }`}
+        >
+          <div
+            className={`mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] ${
+              isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"
+            }`}
+          >
             Timeline (oldest to newest)
           </div>
-          <div className="absolute bottom-6 left-[1.08rem] top-14 w-px bg-[#3B413C]/15" />
+          <div
+            className={`absolute bottom-6 left-[1.08rem] top-14 w-px ${
+              isDark ? "bg-white/16" : "bg-[#3B413C]/15"
+            }`}
+          />
           <div className="space-y-3">
             {orderedExperience.map((exp) => {
               const isActive = exp.id === activeExperience.id;
@@ -733,6 +889,8 @@ function ExperiencePanel({
                   className={`relative block w-full rounded-lg border px-3 py-2 text-left transition-colors duration-200 ${
                     isActive
                       ? "border-[#59A96A]/40 bg-[#59A96A]/10"
+                      : isDark
+                      ? "border-white/14 bg-[#112333] hover:bg-[#183247]"
                       : "border-[#E5E7EB] bg-white hover:bg-[#F5F5F5]"
                   }`}
                 >
@@ -741,11 +899,15 @@ function ExperiencePanel({
                       isActive ? "bg-[#59A96A]" : "bg-[#C5C9CC]"
                     }`}
                   />
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6B7280]">
+                  <p
+                    className={`text-[11px] font-semibold uppercase tracking-[0.14em] ${
+                      isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"
+                    }`}
+                  >
                     {exp.start} to {exp.end}
                   </p>
-                  <p className="mt-1 text-sm font-semibold text-[#111827]">{exp.org}</p>
-                  <p className="text-xs text-[#4B5563]">{exp.role}</p>
+                  <p className={`mt-1 text-sm font-semibold ${isDark ? "text-[#EAF2F8]" : "text-[#111827]"}`}>{exp.org}</p>
+                  <p className={`text-xs ${isDark ? "text-[#C4D2DD]" : "text-[#4B5563]"}`}>{exp.role}</p>
                 </button>
               );
             })}
@@ -759,22 +921,28 @@ function ExperiencePanel({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="rounded-xl border border-[#3B413C]/12 bg-[#F9FAFB] p-4 shadow-sm"
+            className={`rounded-xl border p-4 shadow-sm ${
+              isDark ? "border-white/14 bg-[#172838]" : "border-[#3B413C]/12 bg-[#F9FAFB]"
+            }`}
           >
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6B7280]">
+            <p
+              className={`text-[11px] font-semibold uppercase tracking-[0.14em] ${
+                isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"
+              }`}
+            >
               {activeExperience.start} to {activeExperience.end}
             </p>
-            <h3 className="mt-1 text-base font-semibold text-[#111827]">
+            <h3 className={`mt-1 text-base font-semibold ${isDark ? "text-[#EAF2F8]" : "text-[#111827]"}`}>
               {activeExperience.org}
             </h3>
-            <p className="text-sm text-[#4B5563]">{activeExperience.role}</p>
-            <p className="mt-2 text-xs text-[#6B7280]">{activeExperience.location}</p>
+            <p className={`text-sm ${isDark ? "text-[#C4D2DD]" : "text-[#4B5563]"}`}>{activeExperience.role}</p>
+            <p className={`mt-2 text-xs ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>{activeExperience.location}</p>
 
-            <p className="mt-3 text-sm leading-relaxed text-[#3B413C]">
+            <p className={`mt-3 text-sm leading-relaxed ${isDark ? "text-[#DDE8F0]" : "text-[#3B413C]"}`}>
               {activeExperience.oneLineImpact}
             </p>
 
-            <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-[#4B5563]">
+            <ul className={`mt-3 list-disc space-y-1 pl-5 text-sm ${isDark ? "text-[#C4D2DD]" : "text-[#4B5563]"}`}>
               {activeExperience.bullets.map((bullet) => (
                 <li key={bullet}>{bullet}</li>
               ))}
@@ -784,7 +952,11 @@ function ExperiencePanel({
               {activeExperience.stack.map((tool) => (
                 <span
                   key={tool}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-[#E5E7EB] bg-white px-2.5 py-1 text-[11px] text-[#3B413C]"
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] ${
+                    isDark
+                      ? "border-white/16 bg-[#112333] text-[#DDE8F0]"
+                      : "border-[#E5E7EB] bg-white text-[#3B413C]"
+                  }`}
                 >
                   {renderTechIcon(tool, "h-3 w-3")}
                   <span>{tool}</span>
