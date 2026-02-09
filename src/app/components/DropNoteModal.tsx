@@ -34,7 +34,7 @@ export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps)
       
       {/* Modal */}
       <div className="modal-content relative bg-card rounded-lg shadow-2xl p-8 max-w-md w-full mx-4 border border-border">
-        <h2 className="modal-title text-h2-sans mb-1">{copy.modalTitle}</h2>
+        <h2 className="modal-title text-h2-sans mb-1 text-foreground">{copy.modalTitle}</h2>
         <p className="text-body-sans mb-5 text-muted-foreground">
           {copy.modalSubtitle}
         </p>
@@ -48,7 +48,7 @@ export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps)
               id="message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="form-input-message w-full p-3 rounded-md border border-border bg-input-background resize-none text-annotation-script"
+              className="form-input-message w-full p-3 rounded-md border border-border bg-input-background resize-none text-body-sans text-foreground placeholder:text-foreground/55 caret-foreground opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:text-black dark:placeholder:text-black dark:caret-black"
               rows={4}
               placeholder={copy.fields.placeholderMessage}
               required
@@ -64,7 +64,7 @@ export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps)
               type="text"
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
-              className="form-input-author w-full p-3 rounded-md border border-border bg-input-background text-annotation-script"
+              className="form-input-author w-full p-3 rounded-md border border-border bg-input-background text-body-sans text-foreground placeholder:text-foreground/55 caret-foreground opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:text-black dark:placeholder:text-black dark:caret-black"
               placeholder={copy.fields.placeholderAuthor}
             />
           </div>
