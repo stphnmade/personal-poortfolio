@@ -48,7 +48,7 @@ export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps)
               id="message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="form-input-message w-full p-3 rounded-md border border-border bg-input-background resize-none text-body-sans text-foreground placeholder:text-foreground/55 caret-foreground opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:text-black dark:placeholder:text-black dark:caret-black"
+              className="form-input-message w-full p-3 rounded-md border border-border bg-input-background resize-none text-body-sans text-black placeholder:text-black/45 caret-black opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:text-black dark:placeholder:text-black/45 dark:caret-black"
               rows={4}
               placeholder={copy.fields.placeholderMessage}
               required
@@ -64,7 +64,7 @@ export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps)
               type="text"
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
-              className="form-input-author w-full p-3 rounded-md border border-border bg-input-background text-body-sans text-foreground placeholder:text-foreground/55 caret-foreground opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:text-black dark:placeholder:text-black dark:caret-black"
+              className="form-input-author w-full p-3 rounded-md border border-border bg-input-background text-body-sans text-black placeholder:text-black/45 caret-black opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:text-black dark:placeholder:text-black/45 dark:caret-black"
               placeholder={copy.fields.placeholderAuthor}
             />
           </div>
