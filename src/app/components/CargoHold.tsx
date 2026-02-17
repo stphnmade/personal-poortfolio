@@ -5,7 +5,7 @@ import {
   type MotionValue,
 } from "motion/react";
 import { CHAPTERS } from "@/constants/chapters";
-import cargoLeftDoor from "@/app/assets/Cargo_leftdoor.png";
+import { SUBSTANCE } from "@/constants/substance";
 import { ParachuteCompanion } from "@/app/components/ParachuteCompanion";
 
 interface CargoHoldProps {
@@ -30,8 +30,7 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
   const about = CHAPTERS.find((c) => c.id === "about")!;
   const experience = CHAPTERS.find((c) => c.id === "experience")!;
   const isDark = theme === "dark";
-  const curtainPanelWidth = "min(40vw, 620px)";
-  const [playIntroCurtain, setPlayIntroCurtain] = useState(false);
+  const [playIntroDolly, setPlayIntroDolly] = useState(false);
   const heroProjectBullets = [
     "Dear Days, collaborative family calendar platform focused on shared memories and connection",
     "Storybot, Reddit-to-video automation workflow for scripting, voiceover, editing, and delivery",
@@ -46,26 +45,10 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
   );
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const playedKey = "story-cargo-curtain-intro-v1";
-    const activeKey = "story-cargo-curtain-intro-active-v1";
-    const isActive = window.sessionStorage.getItem(activeKey) === "active";
-    const alreadyPlayed = window.sessionStorage.getItem(playedKey) === "played";
-
-    if (!isActive && alreadyPlayed) return;
-
-    setPlayIntroCurtain(true);
-
-    if (!isActive && !alreadyPlayed) {
-      window.sessionStorage.setItem(playedKey, "played");
-      window.sessionStorage.setItem(activeKey, "active");
-    }
-
-    const clearActiveTimer = window.setTimeout(() => {
-      window.sessionStorage.removeItem(activeKey);
-    }, 6600);
-
-    return () => window.clearTimeout(clearActiveTimer);
+    const raf = window.requestAnimationFrame(() => {
+      setPlayIntroDolly(true);
+    });
+    return () => window.cancelAnimationFrame(raf);
   }, []);
 
   return (
@@ -114,7 +97,7 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
         />
         <div
           className={`relative z-10 mx-auto flex h-full w-full max-w-7xl items-center px-6 lg:px-10 ${
-            playIntroCurtain
+            playIntroDolly
               ? "animate-[cargoDollyReveal_6.6s_cubic-bezier(0.16,1,0.3,1)_forwards]"
               : ""
           }`}
@@ -142,9 +125,7 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
                   isDark ? "text-[#D7E2E9]" : "text-[#2E3A44]"
                 }`}
               >
-                I love building things that start as questions, frustrations, or
-                half formed ideas. I build across consumer apps, interactive data
-                visualizations, multiplayer systems, and creative automation.
+                {SUBSTANCE.meta.title}
               </p>
               <p
                 className={`max-w-3xl text-sm leading-relaxed md:text-base ${
@@ -204,9 +185,9 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
                   isDark ? "text-[#DDE8EF]" : "text-[#2B3842]"
                 }`}
               >
-                Across projects, I focus on clarity, usability, and emotional
-                resonance. I am energized by tools that support communities,
-                empower creativity, and help everyday people navigate choices.
+                LinkedIn header: {SUBSTANCE.meta.title}. I build practical,
+                human-centered products that balance product strategy, UX, and
+                engineering execution.
               </p>
               <ul
                 className={`mt-4 space-y-2 text-sm leading-relaxed ${
@@ -238,50 +219,6 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
         theme={theme}
         className="pointer-events-none absolute left-[64%] top-[18%] z-[15] hidden md:block"
       />
-
-      {playIntroCurtain && (
-        <div className="pointer-events-none absolute inset-0 z-20 animate-[cargoCurtainReveal_3.6s_cubic-bezier(0.16,1,0.3,1)_3s_forwards]">
-          <div
-            className={`absolute inset-y-0 left-0 ${
-              isDark
-                ? "bg-[linear-gradient(90deg,#050608_0%,#0B0E12_45%,#171C24_100%)]"
-                : "bg-[linear-gradient(90deg,#1C1F25_0%,#252A31_45%,#2F363F_100%)]"
-            }`}
-            style={{ right: curtainPanelWidth }}
-          >
-            <div
-              className={`absolute inset-0 ${
-                isDark
-                  ? "bg-[repeating-linear-gradient(90deg,rgba(255,255,255,0.06)_0,rgba(255,255,255,0.06)_1px,rgba(0,0,0,0.18)_1px,rgba(0,0,0,0.18)_9px),radial-gradient(circle_at_18%_34%,rgba(255,255,255,0.12)_0,transparent_40%),radial-gradient(circle_at_70%_68%,rgba(255,255,255,0.06)_0,transparent_42%)]"
-                  : "bg-[repeating-linear-gradient(90deg,rgba(255,255,255,0.08)_0,rgba(255,255,255,0.08)_1px,rgba(0,0,0,0.22)_1px,rgba(0,0,0,0.22)_9px),radial-gradient(circle_at_20%_28%,rgba(255,255,255,0.12)_0,transparent_38%),radial-gradient(circle_at_72%_70%,rgba(255,255,255,0.07)_0,transparent_40%)]"
-              }`}
-            />
-            <div
-              className={`absolute inset-y-0 right-0 w-8 ${
-                isDark
-                  ? "bg-[linear-gradient(90deg,transparent_0%,rgba(0,0,0,0.62)_100%)]"
-                  : "bg-[linear-gradient(90deg,transparent_0%,rgba(0,0,0,0.56)_100%)]"
-              }`}
-            />
-          </div>
-          <div
-            className="absolute inset-y-0 right-0 overflow-hidden"
-            style={{ width: curtainPanelWidth }}
-          >
-            <img
-              src={cargoLeftDoor}
-              alt=""
-              className="h-full w-full select-none object-cover object-right"
-              draggable={false}
-            />
-            <div
-              className={`absolute left-0 top-1/2 h-28 w-4 -translate-y-1/2 rounded-r-full ${
-                isDark ? "bg-[#1B2128]" : "bg-[#676D76]"
-              } shadow-inner`}
-            />
-          </div>
-        </div>
-      )}
     </motion.div>
   );
 }
