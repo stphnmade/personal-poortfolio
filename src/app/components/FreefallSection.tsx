@@ -94,9 +94,8 @@ interface StoryNotePreview {
   author: string;
 }
 
-const EXPERIENCE = CHAPTERS.find((c) => c.id === "experience")!;
 const TOOLS = CHAPTERS.find((c) => c.id === "tools")!;
-const FREEFALL_START_PROGRESS = EXPERIENCE.start;
+const FREEFALL_START_PROGRESS = 0;
 const FREEFALL_END_PROGRESS = TOOLS.end;
 const NOTE_CLOUD_LIMIT = 4;
 
@@ -381,8 +380,7 @@ export function FreefallSection({
   const skillGroups = SUBSTANCE.skillsAndCerts;
   const projectItems = SUBSTANCE.projects;
 
-  // Fade the entire freefall layer in between Experience start and Tools end,
-  // so it does not compete with the cargo doors or the beach.
+  // Fade the entire freefall layer in from the top and out before the beach.
   const freefallOpacity = useTransform(
     scrollYProgress,
     [
@@ -428,9 +426,9 @@ export function FreefallSection({
 
 
   return (
-    // Absolute full-screen layer that sits between the cargo doors and the beach.
+    // Absolute full-screen layer that sits above the story canvas until beach landing.
     <div className="pointer-events-none absolute inset-0 overflow-visible">
-      {/* Animated sky background, fades in/out over the cargo hold as you enter freefall */}
+      {/* Animated sky background, fades in/out across the freefall journey */}
       <motion.div
         className={`absolute inset-0 overflow-hidden ${
           isDark

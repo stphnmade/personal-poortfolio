@@ -7,7 +7,6 @@ import {
   useTransform,
 } from 'motion/react'
 import { FaPaperPlane } from 'react-icons/fa'
-import { CargoHold } from '@/app/components/CargoHold'
 import { FreefallSection } from '@/app/components/FreefallSection'
 import { BeachLanding } from '@/app/components/BeachLanding'
 import { DropNoteModal } from '@/app/components/DropNoteModal'
@@ -21,14 +20,13 @@ interface StoryModeRootProps {
 }
 
 const LANDING_CHAPTER = CHAPTERS.find((c) => c.id === 'landing')!
-const EXPERIENCE_CHAPTER = CHAPTERS.find((c) => c.id === 'experience')!
 export function StoryModeRoot({
   theme,
   onActiveChapterChange,
 }: StoryModeRootProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [notes, setNotes] = useState<StoryNote[]>([])
-  const [activeScene, setActiveScene] = useState<'cargo' | 'freefall' | 'landing'>('cargo')
+  const [activeScene, setActiveScene] = useState<'freefall' | 'landing'>('freefall')
   const activeChapterRef = useRef<ChapterId | null>(null)
 
   const { scrollYProgress } = useScroll()
@@ -49,12 +47,7 @@ export function StoryModeRoot({
       activeChapterRef.current = chapter.id
       onActiveChapterChange?.(chapter.id)
     }
-    const nextScene =
-      latest < EXPERIENCE_CHAPTER.start
-        ? 'cargo'
-        : latest < LANDING_CHAPTER.start
-        ? 'freefall'
-        : 'landing'
+    const nextScene = latest < LANDING_CHAPTER.start ? 'freefall' : 'landing'
     setActiveScene((prev) => (prev === nextScene ? prev : nextScene))
   })
 
@@ -117,9 +110,6 @@ export function StoryModeRoot({
     <div className="relative h-[800vh] bg-background">
       {/* Global story viewport */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        {activeScene === 'cargo' && (
-          <CargoHold scrollYProgress={scrollYProgress} theme={theme} />
-        )}
         {activeScene === 'freefall' && (
           <FreefallSection
             scrollYProgress={scrollYProgress}

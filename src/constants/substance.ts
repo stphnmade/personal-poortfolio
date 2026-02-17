@@ -104,12 +104,12 @@ export const SUBSTANCE = {
     links: {
       github: {
         label: "GitHub",
-        href: "https://github.com/stephensyl-akinwale",
+        href: "https://github.com/stphnmade",
         external: true,
       },
       linkedin: {
         label: "LinkedIn",
-        href: "https://www.linkedin.com/in/stephensyl-akinwale/",
+        href: "https://www.linkedin.com/in/stephen-syl-akinwale/",
         external: true,
       },
       blockopoly: {
@@ -367,7 +367,7 @@ export const SUBSTANCE = {
         },
         {
           label: "GitHub (Blockopoly)",
-          href: "https://github.com/stephensyl-akinwale",
+          href: "https://github.com/stphnmade",
           external: true,
         },
         // Agent: replace with specific repo link when you provide it.
