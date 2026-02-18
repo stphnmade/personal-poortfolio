@@ -19,11 +19,7 @@ interface StoryModeRootProps {
 
 const LANDING_CHAPTER = CHAPTERS.find((c) => c.id === 'landing')!
 const EXPERIENCE_CHAPTER = CHAPTERS.find((c) => c.id === 'experience')!
-const STORY_SNAP_POINTS = CHAPTERS
-  .filter((chapter) => chapter.id !== 'doors')
-  .map((chapter) => chapter.start)
-  .concat(1)
-  .sort((a, b) => a - b)
+const SCENE_THRESHOLD_EPSILON = 0.001
 export function StoryModeRoot({
   theme,
   onActiveChapterChange,
@@ -32,9 +28,6 @@ export function StoryModeRoot({
   const [notes, setNotes] = useState<StoryNote[]>([])
   const [activeScene, setActiveScene] = useState<'cargo' | 'freefall' | 'landing'>('cargo')
   const activeChapterRef = useRef<ChapterId | null>(null)
-  const snapTimerRef = useRef<number | null>(null)
-  const snapUnlockTimerRef = useRef<number | null>(null)
-  const isAutoSnappingRef = useRef(false)
 
   const { scrollYProgress } = useScroll()
 
@@ -45,9 +38,9 @@ export function StoryModeRoot({
       onActiveChapterChange?.(chapter.id)
     }
     const nextScene =
-      latest < EXPERIENCE_CHAPTER.start
+      latest < EXPERIENCE_CHAPTER.start - SCENE_THRESHOLD_EPSILON
         ? 'cargo'
-        : latest < LANDING_CHAPTER.start
+        : latest < LANDING_CHAPTER.start - SCENE_THRESHOLD_EPSILON
         ? 'freefall'
         : 'landing'
     setActiveScene((prev) => (prev === nextScene ? prev : nextScene))
@@ -105,60 +98,6 @@ export function StoryModeRoot({
 
     return () => {
       isCancelled = true
-    }
-  }, [])
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-
-    const clearSnapTimer = () => {
-      if (snapTimerRef.current !== null) {
-        window.clearTimeout(snapTimerRef.current)
-        snapTimerRef.current = null
-      }
-    }
-
-    const queueSnapToNearestChapter = () => {
-      if (isAutoSnappingRef.current) return
-      clearSnapTimer()
-
-      snapTimerRef.current = window.setTimeout(() => {
-        const maxScrollable =
-          window.document.documentElement.scrollHeight - window.innerHeight
-        if (maxScrollable <= 0) return
-
-        const currentTop = window.scrollY
-        const currentProgress = currentTop / maxScrollable
-        const nearestSnapPoint = STORY_SNAP_POINTS.reduce((nearest, candidate) =>
-          Math.abs(candidate - currentProgress) < Math.abs(nearest - currentProgress)
-            ? candidate
-            : nearest,
-        )
-        const targetTop = Math.round(nearestSnapPoint * maxScrollable)
-
-        if (Math.abs(targetTop - currentTop) < 4) return
-
-        isAutoSnappingRef.current = true
-        window.scrollTo({ top: targetTop, behavior: 'auto' })
-
-        if (snapUnlockTimerRef.current !== null) {
-          window.clearTimeout(snapUnlockTimerRef.current)
-        }
-        snapUnlockTimerRef.current = window.setTimeout(() => {
-          isAutoSnappingRef.current = false
-        }, 120)
-      }, 140)
-    }
-
-    window.addEventListener('scroll', queueSnapToNearestChapter, { passive: true })
-
-    return () => {
-      window.removeEventListener('scroll', queueSnapToNearestChapter)
-      clearSnapTimer()
-      if (snapUnlockTimerRef.current !== null) {
-        window.clearTimeout(snapUnlockTimerRef.current)
-        snapUnlockTimerRef.current = null
-      }
     }
   }, [])
 
