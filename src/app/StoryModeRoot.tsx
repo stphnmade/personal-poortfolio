@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import {
-  motion,
   useMotionValueEvent,
   useScroll,
-  useSpring,
-  useTransform,
 } from 'motion/react'
 import { FaPaperPlane } from 'react-icons/fa'
 import { CargoHold } from '@/app/components/CargoHold'
@@ -24,11 +21,7 @@ const LANDING_CHAPTER = CHAPTERS.find((c) => c.id === 'landing')!
 const EXPERIENCE_CHAPTER = CHAPTERS.find((c) => c.id === 'experience')!
 const STORY_SNAP_POINTS = CHAPTERS
   .filter((chapter) => chapter.id !== 'doors')
-  .map((chapter) =>
-    chapter.id === 'landing'
-      ? Math.min(1, chapter.start + 0.02)
-      : chapter.start,
-  )
+  .map((chapter) => chapter.start)
   .concat(1)
   .sort((a, b) => a - b)
 export function StoryModeRoot({
@@ -44,16 +37,6 @@ export function StoryModeRoot({
   const isAutoSnappingRef = useRef(false)
 
   const { scrollYProgress } = useScroll()
-  const landingProgress = useTransform(
-    scrollYProgress,
-    [LANDING_CHAPTER.start - 0.02, LANDING_CHAPTER.start + 0.02],
-    [0, 1],
-  )
-  const landingOpacity = useSpring(landingProgress, {
-    stiffness: 220,
-    damping: 34,
-    mass: 0.5,
-  })
 
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
     const chapter = getChapterForProgress(latest)
@@ -156,14 +139,14 @@ export function StoryModeRoot({
         if (Math.abs(targetTop - currentTop) < 4) return
 
         isAutoSnappingRef.current = true
-        window.scrollTo({ top: targetTop, behavior: 'smooth' })
+        window.scrollTo({ top: targetTop, behavior: 'auto' })
 
         if (snapUnlockTimerRef.current !== null) {
           window.clearTimeout(snapUnlockTimerRef.current)
         }
         snapUnlockTimerRef.current = window.setTimeout(() => {
           isAutoSnappingRef.current = false
-        }, 450)
+        }, 120)
       }, 140)
     }
 
@@ -195,9 +178,9 @@ export function StoryModeRoot({
           />
         )}
         {activeScene === 'landing' && (
-          <motion.div
+          <div
+            data-story-scene="landing"
             className="absolute inset-0 flex items-end justify-center pointer-events-none"
-            style={{ opacity: landingOpacity }}
           >
             <div className="pointer-events-auto flex h-full w-full items-end">
               <BeachLanding
@@ -206,7 +189,7 @@ export function StoryModeRoot({
                 theme={theme}
               />
             </div>
-          </motion.div>
+          </div>
         )}
       </div>
 

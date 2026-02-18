@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import {
   motion,
-  useTransform,
   type MotionValue,
 } from "motion/react";
-import { CHAPTERS } from "@/constants/chapters";
 import { SUBSTANCE } from "@/constants/substance";
 import { ParachuteCompanion } from "@/app/components/ParachuteCompanion";
 
@@ -27,8 +25,7 @@ const STAR_POSITIONS = [
 ];
 
 export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
-  const about = CHAPTERS.find((c) => c.id === "about")!;
-  const experience = CHAPTERS.find((c) => c.id === "experience")!;
+  void scrollYProgress;
   const isDark = theme === "dark";
   const [playIntroDolly, setPlayIntroDolly] = useState(false);
   const heroProjectBullets = [
@@ -37,12 +34,6 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
     "Blockopoly, multiplayer card game with real-time state management and seamless UI interactions",
     "Wishlist, collaborative gifting app built with React, Go, gRPC, and PostgreSQL",
   ];
-
-  const containerOpacity = useTransform(
-    scrollYProgress,
-    [about.start, experience.start - 0.02, experience.start],
-    [1, 1, 0],
-  );
 
   useEffect(() => {
     const raf = window.requestAnimationFrame(() => {
@@ -53,7 +44,7 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
 
   return (
     <motion.div
-      style={{ opacity: containerOpacity }}
+      data-story-scene="cargo"
       className={`relative sticky top-0 h-screen w-screen overflow-hidden ${
         isDark ? "bg-[#05080B]" : "bg-[#DDE5EC]"
       }`}

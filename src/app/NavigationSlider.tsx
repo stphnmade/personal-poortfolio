@@ -48,7 +48,7 @@ export function NavigationSlider({ mode, activeChapterId }: NavigationSliderProp
     const targetProgress =
       chapter.id === 'landing' ? 1 : chapter.start
     const targetTop = targetProgress * maxScrollable
-    window.scrollTo({ top: targetTop, behavior: 'smooth' })
+    window.scrollTo({ top: targetTop, behavior: 'auto' })
   }
 
   useEffect(() => {

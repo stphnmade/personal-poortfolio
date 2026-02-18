@@ -382,19 +382,6 @@ export function FreefallSection({
   const skillGroups = SUBSTANCE.skillsAndCerts;
   const projectItems = SUBSTANCE.projects;
 
-  // Fade the entire freefall layer in between Experience start and Tools end,
-  // so it does not compete with the cargo doors or the beach.
-  const freefallOpacity = useTransform(
-    scrollYProgress,
-    [
-      FREEFALL_START_PROGRESS - 0.02,
-      FREEFALL_START_PROGRESS,
-      FREEFALL_END_PROGRESS,
-      FREEFALL_END_PROGRESS + 0.02,
-    ],
-    [0, 1, 1, 0],
-  );
-
   // Decide which content band is active (Experience → Skills → Projects)
   const [activeBand, setActiveBand] = useState<
     "experience" | "skills" | "projects"
@@ -430,7 +417,7 @@ export function FreefallSection({
 
   return (
     // Absolute full-screen layer that sits between the cargo doors and the beach.
-    <div className="pointer-events-none absolute inset-0 overflow-visible">
+    <div data-story-scene="freefall" className="pointer-events-none absolute inset-0 overflow-visible">
       {/* Animated sky background, fades in/out over the cargo hold as you enter freefall */}
       <motion.div
         className={`absolute inset-0 overflow-hidden ${
@@ -438,7 +425,6 @@ export function FreefallSection({
             ? "bg-[linear-gradient(180deg,#020A14_0%,#061327_40%,#0D2238_72%,#153147_100%)]"
             : "bg-[linear-gradient(180deg,#CFE6FF_0%,#B9D9FA_40%,#A6CCF5_68%,#DDEEFF_100%)]"
         }`}
-        style={{ opacity: freefallOpacity }}
       >
         <div
           className={`absolute inset-0 ${
@@ -550,7 +536,6 @@ export function FreefallSection({
 
       {/* Sticky scene so content stays in view while scrolling the freefall range */}
       <motion.div
-        style={{ opacity: freefallOpacity }}
         className="pointer-events-none sticky top-0 z-20 flex h-screen w-full flex-col items-center justify-center gap-8 px-4"
       >
         <ParachuteCompanion
@@ -580,9 +565,10 @@ export function FreefallSection({
         <AnimatePresence mode="wait">
           <motion.div
             key={activeBand}
-            initial={{ opacity: 0, y: 56, scale: 0.94 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -30, scale: 0.98 }}
+            data-story-band={activeBand}
+            initial={{ y: 56, scale: 0.94 }}
+            animate={{ y: 0, scale: 1 }}
+            exit={{ y: -30, scale: 0.98 }}
             transition={{ duration: 0.52, ease: FLOAT_EASE }}
             className="pointer-events-auto mt-4 w-full max-w-5xl"
           >
@@ -671,9 +657,9 @@ function SkillsPanel({
         <AnimatePresence mode="wait">
           <motion.div
             key={current.id}
-            initial={{ opacity: 0, x: 34, y: 20, scale: 0.97 }}
-            animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -30, y: -14, scale: 0.98 }}
+            initial={{ x: 34, y: 20, scale: 0.97 }}
+            animate={{ x: 0, y: 0, scale: 1 }}
+            exit={{ x: -30, y: -14, scale: 0.98 }}
             transition={{ duration: 0.42, ease: FLOAT_EASE }}
           >
             <p className={`mt-2 text-sm font-semibold ${isDark ? "text-[#DDE8F0]" : "text-[#111827]"}`}>
@@ -683,8 +669,8 @@ function SkillsPanel({
               {current.items.map((item, itemIndex) => (
                 <motion.li
                   key={item}
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ y: 14 }}
+                  animate={{ y: 0 }}
                   transition={{
                     duration: 0.34,
                     delay: 0.06 + itemIndex * 0.045,
@@ -815,9 +801,9 @@ function ProjectsPanel({
         <AnimatePresence mode="wait">
           <motion.article
             key={current.id}
-            initial={{ opacity: 0, x: 36, y: 20, scale: 0.97 }}
-            animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -32, y: -14, scale: 0.98 }}
+            initial={{ x: 36, y: 20, scale: 0.97 }}
+            animate={{ x: 0, y: 0, scale: 1 }}
+            exit={{ x: -32, y: -14, scale: 0.98 }}
             transition={{ duration: 0.44, ease: FLOAT_EASE }}
             className={`rounded-2xl border p-4 shadow-md ${
               isDark
@@ -938,8 +924,8 @@ function ProjectsPanel({
                 {current.stack.map((tool) => (
                   <motion.span
                     key={tool}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ y: 12 }}
+                    animate={{ y: 0 }}
                     transition={{ duration: 0.3, ease: FLOAT_EASE }}
                     className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs ${
                       isDark
@@ -965,8 +951,8 @@ function ProjectsPanel({
                     href={link.href}
                     target={link.external ? "_blank" : undefined}
                     rel={link.external ? "noreferrer" : undefined}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ y: 10 }}
+                    animate={{ y: 0 }}
                     transition={{ duration: 0.3, ease: FLOAT_EASE }}
                     className="inline-flex items-center gap-2 rounded-full bg-[#59A96A] px-3 py-1 text-xs font-semibold text-white shadow transition-colors duration-200 hover:bg-[#4a8d58]"
                   >
@@ -1170,9 +1156,9 @@ function ExperiencePanel({
         <AnimatePresence mode="wait">
           <motion.article
             key={activeExperience.id}
-            initial={{ opacity: 0, x: 34, y: 18, scale: 0.97 }}
-            animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -30, y: -14, scale: 0.98 }}
+            initial={{ x: 34, y: 18, scale: 0.97 }}
+            animate={{ x: 0, y: 0, scale: 1 }}
+            exit={{ x: -30, y: -14, scale: 0.98 }}
             transition={{ duration: 0.42, ease: FLOAT_EASE }}
             className={`rounded-xl border p-4 shadow-sm ${
               isDark ? "border-white/14 bg-[#172838]" : "border-[#3B413C]/12 bg-[#F9FAFB]"
@@ -1199,8 +1185,8 @@ function ExperiencePanel({
               {activeExperience.bullets.map((bullet, bulletIndex) => (
                 <motion.li
                   key={bullet}
-                  initial={{ opacity: 0, x: 8, y: 8 }}
-                  animate={{ opacity: 1, x: 0, y: 0 }}
+                  initial={{ x: 8, y: 8 }}
+                  animate={{ x: 0, y: 0 }}
                   transition={{
                     duration: 0.32,
                     delay: 0.08 + bulletIndex * 0.05,
