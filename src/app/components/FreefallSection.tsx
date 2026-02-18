@@ -99,6 +99,7 @@ const TOOLS = CHAPTERS.find((c) => c.id === "tools")!;
 const FREEFALL_START_PROGRESS = EXPERIENCE.start;
 const FREEFALL_END_PROGRESS = TOOLS.end;
 const NOTE_CLOUD_LIMIT = 4;
+const FLOAT_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const NOTE_CLOUD_TONES_DARK: NoteCloudTone[] = [
   {
@@ -576,23 +577,26 @@ export function FreefallSection({
         </div>
 
         {/* EXPERIENCE / SKILLS / PROJECTS content window */}
-        <motion.div
-          key={activeBand}
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35 }}
-          className="pointer-events-auto mt-4 w-full max-w-5xl"
-        >
-          {activeBand === "experience" && (
-            <ExperiencePanel experience={experienceItems} theme={theme} />
-          )}
-          {activeBand === "skills" && (
-            <SkillsPanel skills={skillGroups} theme={theme} />
-          )}
-          {activeBand === "projects" && (
-            <ProjectsPanel projects={projectItems} theme={theme} />
-          )}
-        </motion.div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeBand}
+            initial={{ opacity: 0, y: 56, scale: 0.94 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -30, scale: 0.98 }}
+            transition={{ duration: 0.52, ease: FLOAT_EASE }}
+            className="pointer-events-auto mt-4 w-full max-w-5xl"
+          >
+            {activeBand === "experience" && (
+              <ExperiencePanel experience={experienceItems} theme={theme} />
+            )}
+            {activeBand === "skills" && (
+              <SkillsPanel skills={skillGroups} theme={theme} />
+            )}
+            {activeBand === "projects" && (
+              <ProjectsPanel projects={projectItems} theme={theme} />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </motion.div>
 
     </div>
@@ -667,18 +671,25 @@ function SkillsPanel({
         <AnimatePresence mode="wait">
           <motion.div
             key={current.id}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            initial={{ opacity: 0, x: 34, y: 20, scale: 0.97 }}
+            animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -30, y: -14, scale: 0.98 }}
+            transition={{ duration: 0.42, ease: FLOAT_EASE }}
           >
             <p className={`mt-2 text-sm font-semibold ${isDark ? "text-[#DDE8F0]" : "text-[#111827]"}`}>
               {current.title}
             </p>
             <ul className={`mt-3 flex flex-wrap gap-2 text-sm ${isDark ? "text-[#C4D2DD]" : "text-[#4B5563]"}`}>
-              {current.items.map((item) => (
-                <li
+              {current.items.map((item, itemIndex) => (
+                <motion.li
                   key={item}
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.34,
+                    delay: 0.06 + itemIndex * 0.045,
+                    ease: FLOAT_EASE,
+                  }}
                   className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 ${
                     isDark
                       ? "border-white/15 bg-[#162736]"
@@ -687,7 +698,7 @@ function SkillsPanel({
                 >
                   {renderSkillIcon(item)}
                   {item}
-                </li>
+                </motion.li>
               ))}
             </ul>
           </motion.div>
@@ -804,10 +815,10 @@ function ProjectsPanel({
         <AnimatePresence mode="wait">
           <motion.article
             key={current.id}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            initial={{ opacity: 0, x: 36, y: 20, scale: 0.97 }}
+            animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -32, y: -14, scale: 0.98 }}
+            transition={{ duration: 0.44, ease: FLOAT_EASE }}
             className={`rounded-2xl border p-4 shadow-md ${
               isDark
                 ? "border-white/12 bg-[#172838]"
@@ -925,8 +936,11 @@ function ProjectsPanel({
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {current.stack.map((tool) => (
-                  <span
+                  <motion.span
                     key={tool}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, ease: FLOAT_EASE }}
                     className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs ${
                       isDark
                         ? "border-white/16 bg-[#112333] text-[#DDE8F0]"
@@ -935,7 +949,7 @@ function ProjectsPanel({
                   >
                     {renderTechIcon(tool)}
                     <span>{tool}</span>
-                  </span>
+                  </motion.span>
                 ))}
               </div>
             </div>
@@ -946,11 +960,14 @@ function ProjectsPanel({
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {projectLinks.map((link) => (
-                  <a
+                  <motion.a
                     key={link.href}
                     href={link.href}
                     target={link.external ? "_blank" : undefined}
                     rel={link.external ? "noreferrer" : undefined}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, ease: FLOAT_EASE }}
                     className="inline-flex items-center gap-2 rounded-full bg-[#59A96A] px-3 py-1 text-xs font-semibold text-white shadow transition-colors duration-200 hover:bg-[#4a8d58]"
                   >
                     {link.label.toLowerCase().includes("github") ? (
@@ -960,7 +977,7 @@ function ProjectsPanel({
                     )}
                     <span>{link.label}</span>
                     {link.external && <FaExternalLinkAlt className="h-3 w-3" />}
-                  </a>
+                  </motion.a>
                 ))}
               </div>
             </div>
@@ -1153,10 +1170,10 @@ function ExperiencePanel({
         <AnimatePresence mode="wait">
           <motion.article
             key={activeExperience.id}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            initial={{ opacity: 0, x: 34, y: 18, scale: 0.97 }}
+            animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -30, y: -14, scale: 0.98 }}
+            transition={{ duration: 0.42, ease: FLOAT_EASE }}
             className={`rounded-xl border p-4 shadow-sm ${
               isDark ? "border-white/14 bg-[#172838]" : "border-[#3B413C]/12 bg-[#F9FAFB]"
             }`}
@@ -1179,8 +1196,19 @@ function ExperiencePanel({
             </p>
 
             <ul className={`mt-3 list-disc space-y-1 pl-5 text-sm ${isDark ? "text-[#C4D2DD]" : "text-[#4B5563]"}`}>
-              {activeExperience.bullets.map((bullet) => (
-                <li key={bullet}>{bullet}</li>
+              {activeExperience.bullets.map((bullet, bulletIndex) => (
+                <motion.li
+                  key={bullet}
+                  initial={{ opacity: 0, x: 8, y: 8 }}
+                  animate={{ opacity: 1, x: 0, y: 0 }}
+                  transition={{
+                    duration: 0.32,
+                    delay: 0.08 + bulletIndex * 0.05,
+                    ease: FLOAT_EASE,
+                  }}
+                >
+                  {bullet}
+                </motion.li>
               ))}
             </ul>
 
