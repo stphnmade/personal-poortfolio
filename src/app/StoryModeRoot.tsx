@@ -133,15 +133,16 @@ export function StoryModeRoot({
       </div>
 
       {/* Fixed CTA for notes */}
-      <div className="fixed bottom-6 right-6 z-40">
+      <div className="fixed bottom-6 left-6 z-40">
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
           aria-label="Drop a sky note"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-[#59A96A] text-[#08120A] shadow-lg transition-all duration-200 hover:scale-105 hover:bg-[#4C975D] active:scale-95"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-[#59A96A] text-[#08120A] shadow-lg transition-all duration-200 hover:scale-105 hover:bg-[#4C975D] active:scale-95 sm:h-auto sm:w-auto sm:gap-2 sm:px-3 sm:py-2"
           data-cta-id="cta-drop-note-fixed-story"
         >
           <FaPaperPlane className="h-4 w-4" />
+          <span className="hidden text-xs font-semibold sm:inline">Drop Note</span>
         </button>
       </div>
 

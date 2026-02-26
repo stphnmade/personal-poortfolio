@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { motion } from 'motion/react'
+import { useMotionValueEvent, useScroll } from 'motion/react'
 import { CHAPTERS, type ChapterId } from '@/constants/chapters'
+import { ScrollProgress } from '@/app/components/magic/ScrollProgress'
 
 interface NavigationSliderProps {
   mode: 'story' | 'recruiter'
@@ -11,7 +12,13 @@ export function NavigationSlider({ mode, activeChapterId }: NavigationSliderProp
   if (mode !== 'story') return null
 
   const [isVisibleWhileScrolling, setIsVisibleWhileScrolling] = useState(false)
+  const [scrollProgressValue, setScrollProgressValue] = useState(0)
   const hideTimerRef = useRef<number | null>(null)
+  const { scrollYProgress } = useScroll()
+
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    setScrollProgressValue(latest)
+  })
 
   const visibleStoryChapters = useMemo(
     () => CHAPTERS.filter((chapter) => chapter.id !== 'doors'),
@@ -33,8 +40,7 @@ export function NavigationSlider({ mode, activeChapterId }: NavigationSliderProp
     return activeIdx
   }, [safeActiveOriginalIndex, visibleStoryChapters])
 
-  const activeVisibleChapter =
-    visibleStoryChapters[safeActiveVisibleIndex] ?? visibleStoryChapters[0]
+  const activeVisibleChapter = visibleStoryChapters[safeActiveVisibleIndex] ?? visibleStoryChapters[0]
   const total = visibleStoryChapters.length
 
   const handleJump = (chapterId: ChapterId) => {
@@ -74,62 +80,30 @@ export function NavigationSlider({ mode, activeChapterId }: NavigationSliderProp
     }
   }, [])
 
-  const trackTop = 10
-  const trackBottom = 90
-  const denominator = Math.max(1, total - 1)
-  const getChapterPositionByIndex = (index: number) =>
-    trackTop + ((trackBottom - trackTop) * index) / denominator
-  const activeTop = getChapterPositionByIndex(safeActiveVisibleIndex)
-
   return (
     <div
-      className={`fixed left-6 top-1/2 z-50 -translate-y-1/2 transition-opacity duration-300 ${
-        isVisibleWhileScrolling ? 'opacity-100' : 'pointer-events-none opacity-0'
+      className={`fixed right-4 top-1/2 z-50 -translate-y-1/2 transition-opacity duration-300 ${
+        isVisibleWhileScrolling ? 'opacity-100' : 'opacity-70 hover:opacity-100'
       }`}
     >
-      <div className="relative h-60 w-14">
-        <div className="absolute left-1/2 top-[8%] h-[84%] w-px -translate-x-1/2 bg-white/20" />
-
-        {visibleStoryChapters.map((chapter, index) => {
-          const top = getChapterPositionByIndex(index)
-          const isCompleteOrCurrent = index <= safeActiveVisibleIndex
-          const isCurrent = index === safeActiveVisibleIndex
-          return (
-            <button
-              key={chapter.id}
-              type="button"
-              onClick={() => handleJump(chapter.id)}
-              className="absolute left-1/2 h-4 w-10 -translate-x-1/2 -translate-y-1/2"
-              style={{ top: `${top}%` }}
-              aria-label={`Go to step ${index + 1}`}
-            >
-              <span
-                className={`mx-auto block h-1 rounded-full transition-all duration-200 ${
-                  isCurrent
-                    ? 'w-8 bg-[#59A96A]'
-                    : isCompleteOrCurrent
-                    ? 'w-6 bg-[#0F86FF]'
-                    : 'w-5 bg-white/35'
-                }`}
-              />
-            </button>
-          )
-        })}
-
-        <motion.button
-          type="button"
-          onClick={() => handleJump(activeVisibleChapter.id)}
-          className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 focus:outline-none"
-          style={{ top: `${activeTop}%` }}
-          layout
-        >
-          <div className="h-3 w-3 rounded-full bg-[#0F86FF]" />
-        </motion.button>
-
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[130%] rounded-full border border-white/15 bg-black/35 px-2 py-0.5 text-[10px] font-semibold text-white/85">
-          {safeActiveVisibleIndex + 1}/{total}
-        </div>
-      </div>
+      <ScrollProgress
+        progress={scrollProgressValue}
+        activeIndex={safeActiveVisibleIndex}
+        markers={visibleStoryChapters.map((chapter) => ({
+          id: chapter.id,
+          label: chapter.navLabel,
+        }))}
+        onMarkerClick={(chapterId) => handleJump(chapterId as ChapterId)}
+      />
+      <button
+        type="button"
+        onClick={() => handleJump(activeVisibleChapter.id)}
+        className="mt-2 w-full rounded-full border border-white/15 bg-black/35 px-2 py-1 text-[10px] font-semibold text-white/85 backdrop-blur transition-colors hover:bg-black/55"
+        aria-label={`Jump to current chapter, ${activeVisibleChapter.navLabel}`}
+        title={activeVisibleChapter.navLabel}
+      >
+        {safeActiveVisibleIndex + 1}/{total}
+      </button>
     </div>
   )
 }

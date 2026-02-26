@@ -49,6 +49,9 @@ import {
   SiTypescript,
 } from "react-icons/si";
 import { CHAPTERS } from "@/constants/chapters";
+import { BorderBeam } from "@/app/components/magic/BorderBeam";
+import { HyperText } from "@/app/components/magic/HyperText";
+import { Marquee } from "@/app/components/magic/Marquee";
 import { SUBSTANCE } from "@/constants/substance";
 import { ParachuteCompanion } from "@/app/components/ParachuteCompanion";
 
@@ -389,6 +392,12 @@ export function FreefallSection({
   const [activeCloudId, setActiveCloudId] = useState<string | null>(null);
   const cloudData = useMemo(() => buildCloudData(userNotes), [userNotes]);
   const noteCloudsPaused = activeCloudId !== null;
+  const activeBandNarration =
+    activeBand === "experience"
+      ? "Impact first: where I worked and what changed because I was there."
+      : activeBand === "skills"
+      ? "Capabilities next: the things a team can rely on me to execute."
+      : "Proof last: projects, tools, and what shipped.";
 
   useEffect(() => {
     if (!activeCloudId) return;
@@ -413,7 +422,6 @@ export function FreefallSection({
       setActiveBand("projects");
     }
   });
-
 
   return (
     // Absolute full-screen layer that sits between the cargo doors and the beach.
@@ -538,6 +546,29 @@ export function FreefallSection({
       <motion.div
         className="pointer-events-none sticky top-0 z-20 flex h-screen w-full flex-col items-center justify-center gap-8 px-4"
       >
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`freefall-aura-${activeBand}`}
+            aria-hidden="true"
+            initial={{ opacity: 0, scale: 0.86 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.08 }}
+            transition={{ duration: 0.46, ease: "easeOut" }}
+            className={`pointer-events-none absolute inset-x-[8%] top-[24%] h-[42vh] rounded-[999px] blur-3xl ${
+              activeBand === "experience"
+                ? isDark
+                  ? "bg-[radial-gradient(circle,rgba(89,169,106,0.18)_0%,rgba(15,134,255,0.08)_38%,transparent_72%)]"
+                  : "bg-[radial-gradient(circle,rgba(89,169,106,0.12)_0%,rgba(15,134,255,0.06)_38%,transparent_72%)]"
+                : activeBand === "skills"
+                ? isDark
+                  ? "bg-[radial-gradient(circle,rgba(74,144,226,0.16)_0%,rgba(217,237,248,0.06)_42%,transparent_72%)]"
+                  : "bg-[radial-gradient(circle,rgba(74,144,226,0.10)_0%,rgba(255,255,255,0.12)_42%,transparent_72%)]"
+                : isDark
+                ? "bg-[radial-gradient(circle,rgba(241,154,62,0.14)_0%,rgba(89,169,106,0.08)_42%,transparent_72%)]"
+                : "bg-[radial-gradient(circle,rgba(241,154,62,0.12)_0%,rgba(89,169,106,0.06)_42%,transparent_72%)]"
+            }`}
+          />
+        </AnimatePresence>
         <ParachuteCompanion
           stage="freefall"
           theme={theme}
@@ -546,18 +577,17 @@ export function FreefallSection({
 
         {/* Freefall heading */}
         <div
-          className={`rounded-full px-4 py-2 shadow-sm backdrop-blur ${
+          className={`max-w-[min(92vw,42rem)] rounded-2xl px-4 py-2 shadow-sm backdrop-blur ${
             isDark
               ? "border border-white/18 bg-[#0B1620]/78"
               : "border border-[#3B413C]/12 bg-white/85"
           } pointer-events-auto`}
         >
-          <span
-            className={`text-sm font-medium ${
-              isDark ? "text-[#E5EFF6]" : "text-[#3B413C]"
-            }`}
-          >
-            {SUBSTANCE.story.freefall.subheadline}
+          <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
+            {activeBand}
+          </p>
+          <span className={`mt-1 block text-sm font-medium ${isDark ? "text-[#E5EFF6]" : "text-[#3B413C]"}`}>
+            {activeBandNarration}
           </span>
         </div>
 
@@ -570,7 +600,7 @@ export function FreefallSection({
             animate={{ y: 0, scale: 1 }}
             exit={{ y: -30, scale: 0.98 }}
             transition={{ duration: 0.52, ease: FLOAT_EASE }}
-            className="pointer-events-auto mt-4 w-full max-w-5xl"
+            className="pointer-events-auto mt-2 w-full max-w-4xl xl:max-w-[68rem]"
           >
             {activeBand === "experience" && (
               <ExperiencePanel experience={experienceItems} theme={theme} />
@@ -630,10 +660,10 @@ function SkillsPanel({
 
   return (
     <div
-      className={`flex w-full items-stretch rounded-2xl border-2 p-6 shadow-xl backdrop-blur-md ${
+      className={`flex w-full items-stretch rounded-2xl border p-5 shadow-xl backdrop-blur-md ${
         isDark
-          ? "border-white/15 bg-[#0F1D29]/88"
-          : "border-[#3B413C]/10 bg-white/95"
+          ? "border-white/12 bg-[#0F1D29]/76"
+          : "border-[#3B413C]/10 bg-white/88"
       }`}
     >
       <div
@@ -652,7 +682,7 @@ function SkillsPanel({
       </div>
       <div className="flex-1">
         <h2 className={`text-h2-sans ${isDark ? "text-[#EAF2F8]" : "text-[#111827]"}`}>
-          {SUBSTANCE.story.freefall.skillsIntro}
+          <HyperText text={SUBSTANCE.story.freefall.skillsIntro} />
         </h2>
         <AnimatePresence mode="wait">
           <motion.div
@@ -690,7 +720,7 @@ function SkillsPanel({
           </motion.div>
         </AnimatePresence>
       </div>
-      <div className={`ml-4 flex w-20 flex-col items-center justify-center gap-2 text-xs ${isDark ? "text-[#AFC0CD]" : "text-[#4B5563]"}`}>
+      <div className={`ml-3 flex w-16 flex-col items-center justify-center gap-2 text-xs ${isDark ? "text-[#AFC0CD]" : "text-[#4B5563]"}`}>
         <button
           onClick={goPrev}
           type="button"
@@ -748,6 +778,9 @@ function ProjectsPanel({
   const quickLookCount = media.length;
   const activeMedia = media[mediaIndex] ?? null;
   const mediaIconTools = current.stack.slice(0, 6);
+  const visibleStack = current.stack.slice(0, 7);
+  const hiddenStackCount = Math.max(0, current.stack.length - visibleStack.length);
+  const projectLabel = current.name.split(",")[0] ?? current.name;
 
   const goPrevMedia = () => {
     if (quickLookCount <= 1) return;
@@ -774,30 +807,118 @@ function ProjectsPanel({
 
   return (
     <div
-      className={`flex w-full items-stretch rounded-2xl border-2 p-6 shadow-xl backdrop-blur-md ${
+      className={`w-full rounded-2xl border p-5 shadow-xl backdrop-blur-md ${
         isDark
-          ? "border-white/15 bg-[#0F1D29]/88"
-          : "border-[#3B413C]/10 bg-white/95"
+          ? "border-white/12 bg-[#0F1D29]/76"
+          : "border-[#3B413C]/10 bg-white/88"
       }`}
     >
-      <div
-        className={`mr-4 flex flex-col items-center justify-center gap-2 border-r pr-4 ${
-          isDark ? "border-white/15" : "border-[#E5E7EB]"
-        }`}
-      >
-        <FaProjectDiagram className="h-6 w-6 text-[#DD403A]" />
-        <span
-          className={`text-xs font-semibold uppercase tracking-[0.2em] ${
-            isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p
+              className={`inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] ${
+                isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"
+              }`}
+            >
+              <FaProjectDiagram className="h-4 w-4 text-[#DD403A]" />
+              Projects
+            </p>
+            <h2 className={`mt-2 text-h2-sans ${isDark ? "text-[#EAF2F8]" : "text-[#111827]"}`}>
+              <HyperText text={SUBSTANCE.story.freefall.toolsIntro} />
+            </h2>
+            <p className={`mt-1 text-xs ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
+              Selected: {projectLabel}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={goPrev}
+              type="button"
+              aria-label="Previous project"
+              className={`rounded-full border px-3 py-1 text-xs transition-colors duration-200 ${
+                isDark
+                  ? "border-white/16 bg-[#162736] text-[#DDE8F0] hover:bg-[#203648]"
+                  : "border-[#E5E7EB] bg-white text-[#3B413C] hover:bg-[#F5F5F5]"
+              }`}
+            >
+              ◀
+            </button>
+            <span
+              className={`rounded-full border px-2.5 py-1 text-xs font-medium ${
+                isDark
+                  ? "border-white/14 bg-[#112333] text-[#EAF2F8]"
+                  : "border-[#E5E7EB] bg-white text-[#111827]"
+              }`}
+            >
+              {index + 1}/{total}
+            </span>
+            <button
+              onClick={goNext}
+              type="button"
+              aria-label="Next project"
+              className={`rounded-full border px-3 py-1 text-xs transition-colors duration-200 ${
+                isDark
+                  ? "border-white/16 bg-[#162736] text-[#DDE8F0] hover:bg-[#203648]"
+                  : "border-[#E5E7EB] bg-white text-[#3B413C] hover:bg-[#F5F5F5]"
+              }`}
+            >
+              ▶
+            </button>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-1.5">
+          {projects.map((project, idx) => {
+            const isActive = idx === index;
+            const shortLabel = (project.name.split(",")[0] ?? project.name).trim();
+            return (
+              <button
+                key={project.id}
+                type="button"
+                onClick={() => setIndex(idx)}
+                aria-label={`Jump to project ${idx + 1}`}
+                className={`inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-[11px] transition-colors ${
+                  isActive
+                    ? "border-[#59A96A]/40 bg-[#59A96A]/10 text-[#EAF7EE] dark:text-[#CDEFD5]"
+                    : isDark
+                    ? "border-white/12 bg-[#112333] text-[#AFC0CD] hover:bg-[#183247]"
+                    : "border-[#E5E7EB] bg-white text-[#4B5563] hover:bg-[#F5F5F5]"
+                }`}
+                title={project.name}
+              >
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    isActive ? "bg-[#59A96A]" : isDark ? "bg-white/25" : "bg-[#C5C9CC]"
+                  }`}
+                />
+                <span>{shortLabel}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="sr-only">Project tools and stack</div>
+        <Marquee
+          speedSeconds={26}
+          className={`rounded-xl border px-2 py-2 ${
+            isDark ? "border-white/12 bg-[#122131]/72" : "border-[#3B413C]/10 bg-white/80"
           }`}
-        >
-          Projects
-        </span>
-      </div>
-      <div className="flex-1 space-y-3">
-        <h2 className={`text-h2-sans ${isDark ? "text-[#EAF2F8]" : "text-[#111827]"}`}>
-          {SUBSTANCE.story.freefall.toolsIntro}
-        </h2>
+          items={current.stack.map((tool) => (
+            <span
+              key={`${current.id}-marquee-${tool}`}
+              className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${
+                isDark
+                  ? "border-white/12 bg-[#0E1B28] text-[#DDE8F0]"
+                  : "border-[#E5E7EB] bg-[#F9FAFB] text-[#3B413C]"
+              }`}
+            >
+              {renderTechIcon(tool)}
+              <span>{tool}</span>
+            </span>
+          ))}
+        />
         <AnimatePresence mode="wait">
           <motion.article
             key={current.id}
@@ -805,12 +926,13 @@ function ProjectsPanel({
             animate={{ x: 0, y: 0, scale: 1 }}
             exit={{ x: -32, y: -14, scale: 0.98 }}
             transition={{ duration: 0.44, ease: FLOAT_EASE }}
-            className={`rounded-2xl border p-4 shadow-md ${
+            className={`relative isolate overflow-hidden rounded-2xl border p-4 shadow-md ${
               isDark
                 ? "border-white/12 bg-[#172838]"
                 : "border-[#3B413C]/12 bg-[#F9FAFB]"
             }`}
           >
+            <BorderBeam duration={5.8} />
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className={`flex items-center gap-2 text-sm ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
                 <FaCalendarAlt className="h-4 w-4 text-[#F19A3E]" />
@@ -832,189 +954,168 @@ function ProjectsPanel({
               <p className={`mt-1 text-sm ${isDark ? "text-[#C4D2DD]" : "text-[#4B5563]"}`}>{current.tagline}</p>
               <p className={`mt-2 text-xs ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>{current.status.access}</p>
             </div>
+            <div className="mt-3 grid gap-3 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+              <div>
+                <div className="flex items-center justify-between gap-2">
+                  <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
+                    Quick Look
+                  </p>
+                  {quickLookCount > 1 && (
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={goPrevMedia}
+                        aria-label="Previous media"
+                        className={`rounded-full border px-2 py-0.5 text-xs transition-colors ${
+                          isDark
+                            ? "border-white/20 bg-[#102130] text-[#DCE8F1] hover:bg-[#1A3347]"
+                            : "border-[#3B413C]/15 bg-white text-[#3B413C] hover:bg-[#E5E7EB]"
+                        }`}
+                      >
+                        ◀
+                      </button>
+                      <span className={`text-[11px] ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
+                        {mediaIndex + 1}/{quickLookCount}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={goNextMedia}
+                        aria-label="Next media"
+                        className={`rounded-full border px-2 py-0.5 text-xs transition-colors ${
+                          isDark
+                            ? "border-white/20 bg-[#102130] text-[#DCE8F1] hover:bg-[#1A3347]"
+                            : "border-[#3B413C]/15 bg-white text-[#3B413C] hover:bg-[#E5E7EB]"
+                        }`}
+                      >
+                        ▶
+                      </button>
+                    </div>
+                  )}
+                </div>
 
-            <div className="mt-3">
-              <div className="flex items-center justify-between gap-2">
-                <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
-                  Quick Look
-                </p>
-                {quickLookCount > 1 && (
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={goPrevMedia}
-                      aria-label="Previous media"
-                      className={`rounded-full border px-2 py-0.5 text-xs transition-colors ${
-                        isDark
-                          ? "border-white/20 bg-[#102130] text-[#DCE8F1] hover:bg-[#1A3347]"
-                          : "border-[#3B413C]/15 bg-white text-[#3B413C] hover:bg-[#E5E7EB]"
-                      }`}
-                    >
-                      ◀
-                    </button>
-                    <span className={`text-[11px] ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
-                      {mediaIndex + 1}/{quickLookCount}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={goNextMedia}
-                      aria-label="Next media"
-                      className={`rounded-full border px-2 py-0.5 text-xs transition-colors ${
-                        isDark
-                          ? "border-white/20 bg-[#102130] text-[#DCE8F1] hover:bg-[#1A3347]"
-                          : "border-[#3B413C]/15 bg-white text-[#3B413C] hover:bg-[#E5E7EB]"
-                      }`}
-                    >
-                      ▶
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div
-                className={`mt-2 overflow-hidden rounded-xl border ${
-                  isDark ? "border-white/14 bg-[#0D1B28]" : "border-[#E5E7EB] bg-white"
-                }`}
-              >
-                {activeMedia ? (
-                  activeMedia.kind === "image" ? (
-                    <img
-                      src={activeMedia.src}
-                      alt={activeMedia.alt}
-                      className="h-44 w-full object-cover"
-                    />
-                  ) : (
-                    <div
-                      className="aspect-video w-full overflow-hidden"
-                    >
-                      <iframe
-                        src={activeMedia.embedUrl}
-                        title={activeMedia.title || current.name}
-                        className="h-full w-full"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
+                <div
+                  className={`mt-2 overflow-hidden rounded-xl border ${
+                    isDark ? "border-white/14 bg-[#0D1B28]" : "border-[#E5E7EB] bg-white"
+                  }`}
+                >
+                  {activeMedia ? (
+                    activeMedia.kind === "image" ? (
+                      <img
+                        src={activeMedia.src}
+                        alt={activeMedia.alt}
+                        className="h-52 w-full object-cover"
                       />
-                    </div>
-                  )
-                ) : (
-                  <div className="relative flex h-44 w-full items-center justify-center overflow-hidden bg-[#0F1519]">
-                    <div className="absolute -left-8 -top-10 h-28 w-28 rounded-full bg-[#59A96A]/18 blur-xl" />
-                    <div className="absolute -bottom-12 -right-8 h-32 w-32 rounded-full bg-[#F19A3E]/20 blur-xl" />
-                    <FaProjectDiagram className="h-12 w-12 text-white/80" />
-                    <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
-                      {mediaIconTools.map((tool) => (
-                        <span
-                          key={`${current.id}-media-icon-${tool}`}
-                          className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-black/35"
-                        >
-                          {renderTechIcon(tool, "h-3.5 w-3.5")}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="mt-3">
-              <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
-                Built With
-              </p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {current.stack.map((tool) => (
-                  <motion.span
-                    key={tool}
-                    initial={{ y: 12 }}
-                    animate={{ y: 0 }}
-                    transition={{ duration: 0.3, ease: FLOAT_EASE }}
-                    className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs ${
-                      isDark
-                        ? "border-white/16 bg-[#112333] text-[#DDE8F0]"
-                        : "border-[#E5E7EB] bg-white text-[#3B413C]"
-                    }`}
-                  >
-                    {renderTechIcon(tool)}
-                    <span>{tool}</span>
-                  </motion.span>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-3">
-              <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
-                Visit
-              </p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {projectLinks.map((link) => (
-                  <motion.a
-                    key={link.href}
-                    href={link.href}
-                    target={link.external ? "_blank" : undefined}
-                    rel={link.external ? "noreferrer" : undefined}
-                    initial={{ y: 10 }}
-                    animate={{ y: 0 }}
-                    transition={{ duration: 0.3, ease: FLOAT_EASE }}
-                    className="inline-flex items-center gap-2 rounded-full bg-[#59A96A] px-3 py-1 text-xs font-semibold text-white shadow transition-colors duration-200 hover:bg-[#4a8d58]"
-                  >
-                    {link.label.toLowerCase().includes("github") ? (
-                      <FaGithub className="h-3 w-3" />
                     ) : (
-                      <FaGlobe className="h-3 w-3" />
+                      <div className="aspect-video w-full overflow-hidden">
+                        <iframe
+                          src={activeMedia.embedUrl}
+                          title={activeMedia.title || current.name}
+                          className="h-full w-full"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      </div>
+                    )
+                  ) : (
+                    <div className="relative flex h-52 w-full items-center justify-center overflow-hidden bg-[#0F1519]">
+                      <div className="absolute -left-8 -top-10 h-28 w-28 rounded-full bg-[#59A96A]/18 blur-xl" />
+                      <div className="absolute -bottom-12 -right-8 h-32 w-32 rounded-full bg-[#F19A3E]/20 blur-xl" />
+                      <FaProjectDiagram className="h-12 w-12 text-white/80" />
+                      <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+                        {mediaIconTools.map((tool) => (
+                          <span
+                            key={`${current.id}-media-icon-${tool}`}
+                            className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-black/35"
+                          >
+                            {renderTechIcon(tool, "h-3.5 w-3.5")}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div
+                  className={`rounded-xl border px-3 py-2 ${
+                    isDark ? "border-[#59A96A]/25 bg-[#102130]/85" : "border-[#59A96A]/18 bg-[#F1FAF3]"
+                  }`}
+                >
+                  <p className={`text-[11px] font-semibold uppercase tracking-[0.18em] ${isDark ? "text-[#B8DCC1]" : "text-[#2F6C3E]"}`}>
+                    Why it mattered
+                  </p>
+                  <p className={`mt-1 text-xs leading-relaxed ${isDark ? "text-[#DDE8F0]" : "text-[#3B413C]"}`}>
+                    {current.impactBullets[0]}
+                  </p>
+                </div>
+
+                <div>
+                  <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
+                    Built With
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {visibleStack.map((tool) => (
+                      <motion.span
+                        key={tool}
+                        initial={{ y: 12 }}
+                        animate={{ y: 0 }}
+                        transition={{ duration: 0.3, ease: FLOAT_EASE }}
+                        className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs ${
+                          isDark
+                            ? "border-white/16 bg-[#112333] text-[#DDE8F0]"
+                            : "border-[#E5E7EB] bg-white text-[#3B413C]"
+                        }`}
+                      >
+                        {renderTechIcon(tool)}
+                        <span>{tool}</span>
+                      </motion.span>
+                    ))}
+                    {hiddenStackCount > 0 && (
+                      <span
+                        className={`inline-flex items-center rounded-full border px-3 py-1 text-xs ${
+                          isDark
+                            ? "border-white/16 bg-[#112333] text-[#AFC0CD]"
+                            : "border-[#E5E7EB] bg-white text-[#6B7280]"
+                        }`}
+                      >
+                        +{hiddenStackCount} more
+                      </span>
                     )}
-                    <span>{link.label}</span>
-                    {link.external && <FaExternalLinkAlt className="h-3 w-3" />}
-                  </motion.a>
-                ))}
+                  </div>
+                </div>
+
+                <div>
+                  <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
+                    Visit
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {projectLinks.map((link) => (
+                      <motion.a
+                        key={link.href}
+                        href={link.href}
+                        target={link.external ? "_blank" : undefined}
+                        rel={link.external ? "noreferrer" : undefined}
+                        initial={{ y: 10 }}
+                        animate={{ y: 0 }}
+                        transition={{ duration: 0.3, ease: FLOAT_EASE }}
+                        className="inline-flex items-center gap-2 rounded-full bg-[#59A96A] px-3 py-1 text-xs font-semibold text-white shadow transition-colors duration-200 hover:bg-[#4a8d58]"
+                      >
+                        {link.label.toLowerCase().includes("github") ? (
+                          <FaGithub className="h-3 w-3" />
+                        ) : (
+                          <FaGlobe className="h-3 w-3" />
+                        )}
+                        <span>{link.label}</span>
+                        {link.external && <FaExternalLinkAlt className="h-3 w-3" />}
+                      </motion.a>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
-
-            <p className={`mt-3 text-xs leading-relaxed ${isDark ? "text-[#C4D2DD]" : "text-[#4B5563]"}`}>
-              {current.impactBullets[0]}
-            </p>
           </motion.article>
         </AnimatePresence>
-      </div>
-      <div className={`ml-4 flex w-20 flex-col items-center justify-center gap-2 text-xs ${isDark ? "text-[#AFC0CD]" : "text-[#4B5563]"}`}>
-        <button
-          onClick={goPrev}
-          type="button"
-          aria-label="Previous project"
-          className={`rounded-full px-3 py-1 transition-colors duration-200 ${
-            isDark
-              ? "bg-[#1A2C3A] text-[#DDE8F0] hover:bg-[#203648]"
-              : "bg-[#F5F5F5] hover:bg-[#E5E7EB]"
-          }`}
-        >
-          ◀
-        </button>
-        <span className={`font-medium ${isDark ? "text-[#EAF2F8]" : "text-[#111827]"}`}>
-          {index + 1}/{total}
-        </span>
-        <button
-          onClick={goNext}
-          type="button"
-          aria-label="Next project"
-          className={`rounded-full px-3 py-1 transition-colors duration-200 ${
-            isDark
-              ? "bg-[#1A2C3A] text-[#DDE8F0] hover:bg-[#203648]"
-              : "bg-[#F5F5F5] hover:bg-[#E5E7EB]"
-          }`}
-        >
-          ▶
-        </button>
-        <div className="mt-2 flex flex-wrap justify-center gap-1.5">
-          {projects.map((project, idx) => (
-            <button
-              key={project.id}
-              type="button"
-              onClick={() => setIndex(idx)}
-              aria-label={`Jump to project ${idx + 1}`}
-              className={`h-1.5 w-1.5 rounded-full transition-colors ${
-                idx === index ? "bg-[#3B413C]" : "bg-[#C5C9CC]"
-              }`}
-            />
-          ))}
-        </div>
       </div>
     </div>
   );
@@ -1078,10 +1179,10 @@ function ExperiencePanel({
 
   return (
     <div
-      className={`rounded-2xl border-2 p-6 shadow-xl backdrop-blur-md ${
+      className={`rounded-2xl border p-5 shadow-xl backdrop-blur-md ${
         isDark
-          ? "border-white/15 bg-[#0F1D29]/88"
-          : "border-[#3B413C]/10 bg-white/95"
+          ? "border-white/12 bg-[#0F1D29]/76"
+          : "border-[#3B413C]/10 bg-white/88"
       }`}
     >
       <div className="mb-4 flex items-center gap-2">
@@ -1096,7 +1197,7 @@ function ExperiencePanel({
       </div>
 
       <h2 className={`text-h2-sans ${isDark ? "text-[#EAF2F8]" : "text-[#111827]"}`}>
-        {SUBSTANCE.story.freefall.experienceIntro}
+        <HyperText text={SUBSTANCE.story.freefall.experienceIntro} />
       </h2>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
@@ -1182,7 +1283,7 @@ function ExperiencePanel({
             </p>
 
             <ul className={`mt-3 list-disc space-y-1 pl-5 text-sm ${isDark ? "text-[#C4D2DD]" : "text-[#4B5563]"}`}>
-              {activeExperience.bullets.map((bullet, bulletIndex) => (
+              {activeExperience.bullets.slice(0, 2).map((bullet, bulletIndex) => (
                 <motion.li
                   key={bullet}
                   initial={{ x: 8, y: 8 }}
@@ -1197,6 +1298,11 @@ function ExperiencePanel({
                 </motion.li>
               ))}
             </ul>
+            {activeExperience.bullets.length > 2 && (
+              <p className={`mt-2 text-xs ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
+                +{activeExperience.bullets.length - 2} more details in Recruiter Mode
+              </p>
+            )}
 
             <div className="mt-3 flex flex-wrap gap-2">
               {activeExperience.stack.map((tool) => (

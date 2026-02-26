@@ -1,5 +1,5 @@
 import { SUBSTANCE } from '@/constants/substance'
-import { FaMoon, FaSun } from 'react-icons/fa'
+import { ThemeToggler } from '@/app/components/magic/ThemeToggler'
 
 interface ModeToggleProps {
   mode: 'story' | 'recruiter'
@@ -20,7 +20,7 @@ export function ModeToggle({
 
   return (
     <div
-      className={`fixed top-4 right-4 z-50 flex items-center gap-2 rounded-full border px-3 py-2 shadow-md backdrop-blur ${
+      className={`fixed left-1/2 top-4 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full border px-2.5 py-2 shadow-md backdrop-blur transition-all ${
         isDark
           ? 'border-white/15 bg-[#0E151B]/85 text-[#ECF3F7]'
           : 'border-black/10 bg-white/85 text-[#3B413C]'
@@ -29,7 +29,7 @@ export function ModeToggle({
       <button
         type="button"
         onClick={() => !isStory && onToggle('story')}
-        className={`text-xs font-medium px-2 py-1 rounded-full ${
+        className={`rounded-full px-2 py-1 text-xs font-medium ${
           isStory
             ? 'bg-[#59A96A] text-white'
             : isDark
@@ -40,11 +40,11 @@ export function ModeToggle({
       >
         {copy.story}
       </button>
-      <span className="text-xs text-muted-foreground">/</span>
+      <span className="text-[10px] text-muted-foreground/70">/</span>
       <button
         type="button"
         onClick={() => isStory && onToggle('recruiter')}
-        className={`text-xs font-medium px-2 py-1 rounded-full ${
+        className={`rounded-full px-2 py-1 text-xs font-medium ${
           !isStory
             ? 'bg-[#59A96A] text-white'
             : isDark
@@ -55,19 +55,7 @@ export function ModeToggle({
       >
         {copy.recruiter}
       </button>
-      <button
-        type="button"
-        onClick={onThemeToggle}
-        className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-xs font-medium transition-colors ${
-          isDark
-            ? 'border-white/15 bg-white/8 text-[#ECF3F7] hover:bg-white/16'
-            : 'border-black/10 bg-black/5 text-[#3B413C] hover:bg-black/10'
-        }`}
-        aria-label="Toggle dark mode"
-      >
-        {isDark ? <FaMoon className="h-3 w-3" /> : <FaSun className="h-3 w-3" />}
-        {isDark ? 'Dark' : 'Light'}
-      </button>
+      <ThemeToggler theme={theme} onToggle={onThemeToggle} />
     </div>
   )
 }

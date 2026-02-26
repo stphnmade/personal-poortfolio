@@ -235,7 +235,7 @@ export const SUBSTANCE = {
     freefall: {
       headline: "Freefall",
       subheadline:
-        "This is the part where the details start floating into view.",
+        "Follow the descent: impact first, then strengths, then the tools behind the build.",
       experienceIntro: "First, my roles and what I changed.",
       skillsIntro: "Then, what I can reliably do on a team.",
       toolsIntro: "Finally, the tools I reach for to ship.",

@@ -2,13 +2,17 @@ import { useMemo, useState } from 'react'
 import { motion } from 'motion/react'
 import {
   FaBriefcase,
+  FaEnvelope,
   FaFlag,
+  FaFilePdf,
   FaGithub,
   FaLinkedin,
   FaProjectDiagram,
   FaTools,
 } from 'react-icons/fa'
 import { ParachuteCompanion } from '@/app/components/ParachuteCompanion'
+import { Dock } from '@/app/components/magic/Dock'
+import { NumberTicker } from '@/app/components/magic/NumberTicker'
 import { SUBSTANCE } from '@/constants/substance'
 
 interface BeachLandingProps {
@@ -153,6 +157,10 @@ export function BeachLanding({ projects, userNotes, theme }: BeachLandingProps) 
       id: 'experience',
       title: 'Experience',
       text: `${experienceItems.length} core roles across ${careerSpanYears}+ years of execution and leadership.`,
+      metrics: [
+        { value: experienceItems.length, suffix: ' roles' },
+        { value: careerSpanYears, suffix: '+ years' },
+      ],
       icon: <FaBriefcase className="h-3.5 w-3.5" />,
       feature: 'cactus' as const,
     },
@@ -160,6 +168,10 @@ export function BeachLanding({ projects, userNotes, theme }: BeachLandingProps) 
       id: 'projects',
       title: 'Projects',
       text: `${allProjects.length} total builds, ${projects.length} payload snapshots reached the beach.`,
+      metrics: [
+        { value: allProjects.length, suffix: ' builds' },
+        { value: projects.length, suffix: ' featured' },
+      ],
       icon: <FaProjectDiagram className="h-3.5 w-3.5" />,
       feature: 'sand' as const,
     },
@@ -167,6 +179,10 @@ export function BeachLanding({ projects, userNotes, theme }: BeachLandingProps) 
       id: 'tools-skills',
       title: 'Skills and Tools',
       text: `${totalSkills} skills and ${totalTools} tools that hold up in changing terrain.`,
+      metrics: [
+        { value: totalSkills, suffix: ' skills' },
+        { value: totalTools, suffix: ' tools' },
+      ],
       icon: <FaTools className="h-3.5 w-3.5" />,
       feature: 'rock' as const,
     },
@@ -190,7 +206,6 @@ export function BeachLanding({ projects, userNotes, theme }: BeachLandingProps) 
           <div className="absolute left-[54%] top-[47%] h-4 w-4 rounded-full bg-[#B8AB94]/48" />
           <div className="absolute left-[28%] top-[58%] h-2 w-2 rounded-full bg-[#9D8F76]/45" />
         </div>
-
         <div
           className={`absolute inset-x-0 bottom-[24vh] h-[20vh] transition-colors duration-300 ${
             activeFeature === 'sand'
@@ -298,17 +313,6 @@ export function BeachLanding({ projects, userNotes, theme }: BeachLandingProps) 
           scale={1.18}
         />
 
-        <div
-          className={`absolute bottom-[20vh] left-1/2 h-16 w-16 -translate-x-1/2 rounded-t-xl border transition-all duration-300 ${
-            activeFeature === 'sand'
-              ? isDark
-                ? 'border-[#7F8F9E]/60 bg-[#2E3944] shadow-[0_0_26px_rgba(202,220,240,0.2)]'
-                : 'border-[#7D8793]/55 bg-[#CBD2DA] shadow-[0_0_18px_rgba(70,80,92,0.2)]'
-              : isDark
-              ? 'border-[#5B6977]/45 bg-[#27323D]'
-              : 'border-[#98A4AF]/45 bg-[#D8DEE4]'
-          }`}
-        />
       </div>
 
       <ParachuteCompanion
@@ -318,6 +322,17 @@ export function BeachLanding({ projects, userNotes, theme }: BeachLandingProps) 
       />
 
       <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col justify-end px-6 pb-8">
+        <div className="mb-2 flex items-center justify-center">
+          <p
+            className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] ${
+              isDark
+                ? 'border-[#B08A60]/30 bg-[#4A3323]/60 text-[#FFE7CA]'
+                : 'border-[#C29A6B]/45 bg-[#E8C79B]/70 text-[#5A3A1F]'
+            }`}
+          >
+            Tap a crate to highlight the terrain
+          </p>
+        </div>
         <div className="flex flex-wrap items-end justify-center gap-3">
           {summaryCards.map((card, index) => {
             const isActive = activeFeature === card.feature
@@ -344,6 +359,25 @@ export function BeachLanding({ projects, userNotes, theme }: BeachLandingProps) 
                   {card.icon}
                   {card.title}
                 </p>
+                <div className="mt-1 flex flex-wrap gap-1.5">
+                  {card.metrics.map((metric) => (
+                    <span
+                      key={`${card.id}-${metric.suffix}`}
+                      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold ${
+                        isActive
+                          ? isDark
+                            ? 'border-[#FFD9A8]/45 bg-[#7A5634]/55 text-[#FFEED8]'
+                            : 'border-[#A87440]/35 bg-[#F0C38D]/70 text-[#4A2E1A]'
+                          : isDark
+                          ? 'border-[#B08A60]/28 bg-[#4B3423]/55 text-[#F2DFC8]'
+                          : 'border-[#B58C60]/35 bg-[#E6BE89]/65 text-[#4A2E1A]'
+                      }`}
+                    >
+                      <NumberTicker value={metric.value} className="text-[11px]" />
+                      <span className="ml-1">{metric.suffix}</span>
+                    </span>
+                  ))}
+                </div>
                 <p className="mt-1 text-annotation-script text-sm leading-snug">
                   {card.text}
                 </p>
@@ -420,32 +454,40 @@ export function BeachLanding({ projects, userNotes, theme }: BeachLandingProps) 
           </div>
         </section>
 
-        <footer className="mt-4 flex items-center justify-center gap-3 text-xs font-semibold">
+        <footer className="mt-4 flex flex-col items-center justify-center gap-2 text-xs font-semibold">
           <span className={`${isDark ? 'text-[#E8D8C4]' : 'text-[#5A3B22]'}`}>
             Stephen Syl-Akinwale
           </span>
-          <a
-            href={links.linkedin.href}
-            target="_blank"
-            rel="noreferrer"
-            className={`${isDark ? 'text-[#E8D8C4]' : 'text-[#5A3B22]'} underline-offset-2 hover:underline`}
-          >
-            <span className="inline-flex items-center gap-1">
-              <FaLinkedin className="h-3 w-3" />
-              LinkedIn
-            </span>
-          </a>
-          <a
-            href={links.github.href}
-            target="_blank"
-            rel="noreferrer"
-            className={`${isDark ? 'text-[#E8D8C4]' : 'text-[#5A3B22]'} underline-offset-2 hover:underline`}
-          >
-            <span className="inline-flex items-center gap-1">
-              <FaGithub className="h-3 w-3" />
-              GitHub
-            </span>
-          </a>
+          <Dock
+            tone="sand"
+            items={[
+              {
+                id: 'email',
+                label: 'Email',
+                href: `mailto:${SUBSTANCE.meta.email}`,
+                icon: <FaEnvelope className="h-3.5 w-3.5" />,
+              },
+              {
+                id: 'linkedin',
+                label: 'LinkedIn',
+                href: links.linkedin.href,
+                icon: <FaLinkedin className="h-3.5 w-3.5" />,
+              },
+              {
+                id: 'github',
+                label: 'GitHub',
+                href: links.github.href,
+                icon: <FaGithub className="h-3.5 w-3.5" />,
+              },
+              {
+                id: 'resume',
+                label: 'Resume',
+                href: links.resume.href,
+                download: true,
+                icon: <FaFilePdf className="h-3.5 w-3.5" />,
+              },
+            ]}
+          />
         </footer>
       </div>
     </motion.div>

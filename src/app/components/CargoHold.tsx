@@ -5,6 +5,7 @@ import {
 } from "motion/react";
 import { SUBSTANCE } from "@/constants/substance";
 import { ParachuteCompanion } from "@/app/components/ParachuteCompanion";
+import { AuroraText } from "@/app/components/magic/AuroraText";
 
 interface CargoHoldProps {
   scrollYProgress: MotionValue<number>;
@@ -109,7 +110,7 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
                   isDark ? "text-[#F4FAFD]" : "text-[#1F2C36]"
                 }`}
               >
-                Hi, I am Stephen.
+                <AuroraText text="Hi, Stephen" />
               </h2>
               <p
                 className={`max-w-3xl text-base leading-relaxed md:text-lg ${

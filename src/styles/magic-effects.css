@@ -1,0 +1,231 @@
+@keyframes magicAuroraPan {
+  0% {
+    background-position: 0% 50%;
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    background-position: 100% 50%;
+    filter: hue-rotate(12deg);
+  }
+  100% {
+    background-position: 0% 50%;
+    filter: hue-rotate(0deg);
+  }
+}
+
+@keyframes magicMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes magicBeamSweep {
+  0% {
+    transform: translateX(-130%) skewX(-18deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.25;
+  }
+  100% {
+    transform: translateX(130%) skewX(-18deg);
+    opacity: 0;
+  }
+}
+
+@keyframes magicGridDrift {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(36px);
+  }
+}
+
+@keyframes magicFlicker {
+  0%,
+  100% {
+    opacity: 0.08;
+    transform: scale(0.92);
+  }
+  45% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  60% {
+    opacity: 0.12;
+    transform: scale(0.95);
+  }
+}
+
+.magic-aurora-text {
+  background-image:
+    radial-gradient(circle at 20% 25%, rgba(89, 169, 106, 0.95), transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(74, 144, 226, 0.95), transparent 40%),
+    radial-gradient(circle at 40% 80%, rgba(241, 154, 62, 0.9), transparent 46%),
+    linear-gradient(120deg, #eef7ff 0%, #bde5c6 25%, #cfe4ff 52%, #ffd6b3 78%, #f6fbff 100%);
+  background-size: 200% 200%;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: magicAuroraPan 9s ease-in-out infinite;
+}
+
+.magic-border-beam {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.magic-border-beam::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  width: 44%;
+  left: -50%;
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(89, 169, 106, 0.18) 28%,
+      rgba(74, 144, 226, 0.28) 52%,
+      rgba(241, 154, 62, 0.2) 72%,
+      transparent 100%
+    );
+  filter: blur(8px);
+  opacity: 0.55;
+  animation: magicBeamSweep var(--magic-beam-duration, 5.4s) ease-in-out infinite;
+}
+
+.magic-border-beam::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.magic-marquee {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.magic-marquee-track {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  animation: magicMarquee var(--magic-marquee-duration, 24s) linear infinite;
+}
+
+.magic-marquee:hover .magic-marquee-track[data-pause='true'] {
+  animation-play-state: paused;
+}
+
+.magic-marquee[data-reverse='true'] .magic-marquee-track {
+  animation-direction: reverse;
+}
+
+.magic-flickering-grid {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-image:
+    linear-gradient(to right, rgba(132, 160, 183, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(132, 160, 183, 0.12) 1px, transparent 1px);
+  background-size: var(--magic-grid-size, 34px) var(--magic-grid-size, 34px);
+}
+
+.magic-flickering-grid::before {
+  content: '';
+  position: absolute;
+  inset: -30px 0 0;
+  background-image:
+    radial-gradient(circle at 12% 14%, rgba(89, 169, 106, 0.14), transparent 40%),
+    radial-gradient(circle at 76% 20%, rgba(74, 144, 226, 0.12), transparent 42%),
+    radial-gradient(circle at 58% 72%, rgba(241, 154, 62, 0.12), transparent 48%);
+  animation: magicGridDrift 8s linear infinite;
+}
+
+.magic-flickering-cell {
+  position: absolute;
+  border-radius: 2px;
+  background: rgba(233, 244, 255, 0.95);
+  box-shadow: 0 0 10px rgba(167, 209, 255, 0.35);
+  animation: magicFlicker 2.6s ease-in-out infinite;
+}
+
+.dark .magic-flickering-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+}
+
+.dark .magic-flickering-cell {
+  background: rgba(217, 238, 255, 0.8);
+  box-shadow: 0 0 12px rgba(112, 185, 255, 0.28);
+}
+
+.magic-retro-grid {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), black 24%, black 72%, rgba(0, 0, 0, 0));
+}
+
+.magic-retro-grid-plane {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  top: 12%;
+  bottom: -28%;
+  transform-origin: center;
+  transform: perspective(540px) rotateX(66deg);
+  background-image:
+    linear-gradient(to right, rgba(222, 244, 255, 0.22) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(222, 244, 255, 0.18) 1px, transparent 1px);
+  background-size: 46px 46px;
+  opacity: 0.55;
+}
+
+.dark .magic-retro-grid-plane {
+  background-image:
+    linear-gradient(to right, rgba(162, 201, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(162, 201, 255, 0.12) 1px, transparent 1px);
+}
+
+.magic-retro-grid-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 72%, rgba(255, 241, 213, 0.18), transparent 44%),
+    radial-gradient(circle at 22% 25%, rgba(255, 255, 255, 0.14), transparent 34%),
+    radial-gradient(circle at 78% 20%, rgba(144, 208, 255, 0.16), transparent 36%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .magic-aurora-text,
+  .magic-marquee-track,
+  .magic-border-beam::before,
+  .magic-flickering-grid::before,
+  .magic-flickering-cell {
+    animation: none !important;
+  }
+}
