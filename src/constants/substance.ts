@@ -14,6 +14,7 @@ import wishlistGiftingMedia from "@/app/assets/project-media/wishlist-gifting.sv
 import dearDaysCalendarMedia from "@/app/assets/project-media/deardays-calendar.svg";
 import storybotPipelineMedia from "@/app/assets/project-media/storybot-pipeline.svg";
 import nbaShotmapMedia from "@/app/assets/project-media/nba-shotmap.svg";
+import brfssDashboardMedia from "@/app/assets/project-media/brfss-dashboard.svg";
 
 export type Link = {
   label: string;
@@ -284,6 +285,29 @@ export const SUBSTANCE = {
 
   experience: [
     {
+      id: "extern-trubridge",
+      org: "Extern @ TruBridge",
+      role: "Extern",
+      location: "Remote",
+      start: "Jan 2026",
+      end: "Mar 2026",
+      oneLineImpact:
+        "Analyzed public healthcare datasets on infection trends and delivered dashboard-backed reports covering population patterns, limitations, and stakeholder recommendations.",
+      bullets: [
+        "Conducted exploratory data analysis on public healthcare datasets, examining infection trends across case counts, demographics, and time patterns to uncover actionable insights.",
+        "Used ChatGPT and Claude to accelerate data discovery, shape research prompts, and support visualization, dashboard, and report creation.",
+        "Produced synthesis reports and presentations summarizing infection trends, data limitations, public health implications, and recommended next steps for stakeholders.",
+      ],
+      stack: [
+        "Python",
+        "Statistical Data Analysis",
+        "Data Science",
+        "ChatGPT",
+        "Claude",
+        "Healthcare datasets",
+      ],
+    },
+    {
       id: "ecornell-support",
       org: "eCornell",
       role: "System Support Intern and Systems Helpdesk",
@@ -333,6 +357,47 @@ export const SUBSTANCE = {
   ] satisfies ExperienceItem[],
 
   projects: [
+    {
+      id: "brfss-dashboard",
+      name: "BRFSS Chronic Disease Burden Dashboard 2024",
+      timeframe: "Jan 2026 to Mar 2026",
+      tagline:
+        "Dashboard and synthesis work translating CDC BRFSS data into an accessible view of chronic disease burden patterns.",
+      status: {
+        label: "Completed",
+        tone: "completed",
+        access: "Public artifact is available. Source analysis summary is viewable through the hosted dashboard.",
+      },
+      impactBullets: [
+        "Public health datasets are difficult to scan quickly, making it harder to surface meaningful chronic disease patterns for non-technical stakeholders.",
+        "Analyzed CDC BRFSS data to explore infection and chronic disease burden signals across counts, demographics, and temporal patterns.",
+        "Used AI-assisted research workflows with ChatGPT and Claude to guide data discovery, structure prompts, and support the creation of visualizations, dashboards, and synthesis reports.",
+        "Delivered a dashboard and presentation-ready summary covering trend findings, dataset limitations, population insights, public health implications, and recommended stakeholder actions.",
+      ],
+      stack: [
+        "Python",
+        "CDC BRFSS",
+        "EDA",
+        "Data Visualization",
+        "ChatGPT",
+        "Claude",
+        "Public Health Analytics",
+      ],
+      links: [
+        {
+          label: "Open Dashboard Artifact",
+          href: "https://claude.ai/public/artifacts/eb7639f5-d865-44bf-9adb-046bcea6c0d8",
+          external: true,
+        },
+      ],
+      media: [
+        {
+          kind: "image",
+          src: brfssDashboardMedia,
+          alt: "BRFSS chronic disease burden dashboard preview",
+        },
+      ],
+    },
     {
       id: "blockopoly",
       name: "Blockopoly, Online Multiplayer Digital Card Game",

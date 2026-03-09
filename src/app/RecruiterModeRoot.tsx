@@ -122,7 +122,7 @@ export function RecruiterModeRoot() {
   const [activeSectionId, setActiveSectionId] = useState(sectionLinks[0]?.id ?? "section-about");
 
   const featuredProjectIds = useMemo(
-    () => new Set(["blockopoly", "wishlist", "dear-days"]),
+    () => new Set(["blockopoly", "wishlist", "dear-days", "brfss-dashboard"]),
     [],
   );
   const featuredProjects = useMemo(() => {
