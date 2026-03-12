@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import {
   AnimatePresence,
   motion,
+  useSpring,
   useTransform,
   useMotionValueEvent,
   type MotionValue,
@@ -103,6 +104,25 @@ const FREEFALL_START_PROGRESS = EXPERIENCE.start;
 const FREEFALL_END_PROGRESS = TOOLS.end;
 const NOTE_CLOUD_LIMIT = 4;
 const FLOAT_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const FREEFALL_BANDS = [
+  {
+    id: "experience",
+    label: "Experience",
+    narration:
+      "Impact first: where I worked and what changed because I was there.",
+  },
+  {
+    id: "skills",
+    label: "Skills",
+    narration:
+      "Capabilities next: the things a team can rely on me to execute.",
+  },
+  {
+    id: "projects",
+    label: "Projects",
+    narration: "Proof last: projects, tools, and what shipped.",
+  },
+] as const;
 
 const NOTE_CLOUD_TONES_DARK: NoteCloudTone[] = [
   {
@@ -393,11 +413,24 @@ export function FreefallSection({
   const cloudData = useMemo(() => buildCloudData(userNotes), [userNotes]);
   const noteCloudsPaused = activeCloudId !== null;
   const activeBandNarration =
-    activeBand === "experience"
-      ? "Impact first: where I worked and what changed because I was there."
-      : activeBand === "skills"
-      ? "Capabilities next: the things a team can rely on me to execute."
-      : "Proof last: projects, tools, and what shipped.";
+    FREEFALL_BANDS.find((band) => band.id === activeBand)?.narration ?? "";
+  const sectionPosition = useSpring(
+    useTransform(
+      freefallProgress,
+      [0, 0.18, 0.3, 0.5, 0.62, 0.82, 1],
+      [0, 0, 1, 1, 2, 2, 2],
+    ),
+    {
+      stiffness: 140,
+      damping: 28,
+      mass: 0.55,
+    },
+  );
+  const sceneY = useTransform(
+    scrollYProgress,
+    [0, 0.12, 0.2, 0.82, 0.89, 1],
+    ["100%", "100%", "0%", "0%", "-4%", "-4%"],
+  );
 
   useEffect(() => {
     if (!activeCloudId) return;
@@ -412,20 +445,19 @@ export function FreefallSection({
     };
   }, [activeCloudId]);
 
-  useMotionValueEvent(freefallProgress, "change", (value) => {
-    const v = Math.max(0, Math.min(1, value));
-    if (v < 0.35) {
-      setActiveBand("experience");
-    } else if (v < 0.7) {
-      setActiveBand("skills");
-    } else {
-      setActiveBand("projects");
-    }
+  useMotionValueEvent(sectionPosition, "change", (value) => {
+    const nextBand =
+      value < 0.5 ? "experience" : value < 1.5 ? "skills" : "projects";
+    setActiveBand((prev) => (prev === nextBand ? prev : nextBand));
   });
 
   return (
     // Absolute full-screen layer that sits between the cargo doors and the beach.
-    <div data-story-scene="freefall" className="pointer-events-none absolute inset-0 overflow-visible">
+    <motion.div
+      data-story-scene="freefall"
+      className="pointer-events-none absolute inset-0 overflow-visible"
+      style={{ y: sceneY }}
+    >
       {/* Animated sky background, fades in/out over the cargo hold as you enter freefall */}
       <motion.div
         className={`absolute inset-0 overflow-hidden ${
@@ -546,80 +578,149 @@ export function FreefallSection({
       <motion.div
         className="pointer-events-none sticky top-0 z-20 flex h-screen w-full flex-col items-center justify-center gap-8 px-4"
       >
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`freefall-aura-${activeBand}`}
-            aria-hidden="true"
-            initial={{ opacity: 0, scale: 0.86 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.08 }}
-            transition={{ duration: 0.46, ease: "easeOut" }}
-            className={`pointer-events-none absolute inset-x-[8%] top-[24%] h-[42vh] rounded-[999px] blur-3xl ${
-              activeBand === "experience"
-                ? isDark
-                  ? "bg-[radial-gradient(circle,rgba(89,169,106,0.18)_0%,rgba(15,134,255,0.08)_38%,transparent_72%)]"
-                  : "bg-[radial-gradient(circle,rgba(89,169,106,0.12)_0%,rgba(15,134,255,0.06)_38%,transparent_72%)]"
-                : activeBand === "skills"
-                ? isDark
-                  ? "bg-[radial-gradient(circle,rgba(74,144,226,0.16)_0%,rgba(217,237,248,0.06)_42%,transparent_72%)]"
-                  : "bg-[radial-gradient(circle,rgba(74,144,226,0.10)_0%,rgba(255,255,255,0.12)_42%,transparent_72%)]"
-                : isDark
-                ? "bg-[radial-gradient(circle,rgba(241,154,62,0.14)_0%,rgba(89,169,106,0.08)_42%,transparent_72%)]"
-                : "bg-[radial-gradient(circle,rgba(241,154,62,0.12)_0%,rgba(89,169,106,0.06)_42%,transparent_72%)]"
-            }`}
-          />
-        </AnimatePresence>
+        <motion.div
+          aria-hidden="true"
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.32, ease: "easeOut" }}
+          className={`pointer-events-none absolute inset-x-[8%] top-[24%] h-[42vh] rounded-[999px] blur-3xl ${
+            activeBand === "experience"
+              ? isDark
+                ? "bg-[radial-gradient(circle,rgba(89,169,106,0.18)_0%,rgba(15,134,255,0.08)_38%,transparent_72%)]"
+                : "bg-[radial-gradient(circle,rgba(89,169,106,0.12)_0%,rgba(15,134,255,0.06)_38%,transparent_72%)]"
+              : activeBand === "skills"
+              ? isDark
+                ? "bg-[radial-gradient(circle,rgba(74,144,226,0.16)_0%,rgba(217,237,248,0.06)_42%,transparent_72%)]"
+                : "bg-[radial-gradient(circle,rgba(74,144,226,0.10)_0%,rgba(255,255,255,0.12)_42%,transparent_72%)]"
+              : isDark
+              ? "bg-[radial-gradient(circle,rgba(241,154,62,0.14)_0%,rgba(89,169,106,0.08)_42%,transparent_72%)]"
+              : "bg-[radial-gradient(circle,rgba(241,154,62,0.12)_0%,rgba(89,169,106,0.06)_42%,transparent_72%)]"
+          }`}
+        />
         <ParachuteCompanion
           stage="freefall"
           theme={theme}
           className="pointer-events-none absolute right-[8%] top-[18%] z-20 hidden md:block"
         />
 
-        {/* Freefall heading */}
-        <div
-          className={`max-w-[min(92vw,42rem)] rounded-2xl px-4 py-2 shadow-sm backdrop-blur ${
-            isDark
-              ? "border border-white/18 bg-[#0B1620]/78"
-              : "border border-[#3B413C]/12 bg-white/85"
-          } pointer-events-auto`}
-        >
-          <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
-            {activeBand}
-          </p>
-          <span className={`mt-1 block text-sm font-medium ${isDark ? "text-[#E5EFF6]" : "text-[#3B413C]"}`}>
-            {activeBandNarration}
-          </span>
-        </div>
+        <div className="pointer-events-none relative z-20 flex h-full w-full max-w-[84rem] flex-col justify-center gap-4 pt-14 md:pt-12">
+          <div className="pointer-events-auto flex items-start justify-between gap-4">
+            <div
+              className={`max-w-[min(92vw,42rem)] rounded-2xl px-4 py-2 shadow-sm backdrop-blur ${
+                isDark
+                  ? "border border-white/18 bg-[#0B1620]/78"
+                  : "border border-[#3B413C]/12 bg-white/85"
+              }`}
+            >
+              <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isDark ? "text-[#AFC0CD]" : "text-[#6B7280]"}`}>
+                {activeBand}
+              </p>
+              <span className={`mt-1 block text-sm font-medium ${isDark ? "text-[#E5EFF6]" : "text-[#3B413C]"}`}>
+                {activeBandNarration}
+              </span>
+            </div>
 
-        {/* EXPERIENCE / SKILLS / PROJECTS content window */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeBand}
-            data-story-band={activeBand}
-            initial={{ y: 56, scale: 0.94 }}
-            animate={{ y: 0, scale: 1 }}
-            exit={{ y: -30, scale: 0.98 }}
-            transition={{ duration: 0.52, ease: FLOAT_EASE }}
-            className="pointer-events-auto mt-2 w-full max-w-4xl xl:max-w-[68rem]"
-          >
-            {activeBand === "experience" && (
-              <ExperiencePanel experience={experienceItems} theme={theme} />
-            )}
-            {activeBand === "skills" && (
-              <SkillsPanel skills={skillGroups} theme={theme} />
-            )}
-            {activeBand === "projects" && (
-              <ProjectsPanel projects={projectItems} theme={theme} />
-            )}
-          </motion.div>
-        </AnimatePresence>
+            <div
+              className={`hidden rounded-2xl border px-3 py-3 shadow-sm backdrop-blur md:block ${
+                isDark
+                  ? "border-white/14 bg-[#0B1620]/72"
+                  : "border-[#3B413C]/12 bg-white/84"
+              }`}
+            >
+              <div className="space-y-3">
+                {FREEFALL_BANDS.map((band, index) => {
+                  const isActive = band.id === activeBand;
+                  return (
+                    <div key={band.id} className="flex items-center gap-3">
+                      <span
+                        className={`inline-flex h-7 w-7 items-center justify-center rounded-full border text-[11px] font-semibold transition-colors ${
+                          isActive
+                            ? "border-[#59A96A]/50 bg-[#59A96A]/15 text-[#59A96A]"
+                            : isDark
+                            ? "border-white/14 bg-white/5 text-[#AFC0CD]"
+                            : "border-[#3B413C]/12 bg-white text-[#6B7280]"
+                        }`}
+                      >
+                        {index + 1}
+                      </span>
+                      <span
+                        className={`text-xs font-semibold uppercase tracking-[0.16em] ${
+                          isActive
+                            ? isDark
+                              ? "text-[#EAF2F8]"
+                              : "text-[#1F2C36]"
+                            : isDark
+                            ? "text-[#AFC0CD]"
+                            : "text-[#6B7280]"
+                        }`}
+                      >
+                        {band.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div className="pointer-events-none relative h-[min(70vh,44rem)] w-full overflow-hidden">
+            <StoryBandPanel index={0} position={sectionPosition} isActive={activeBand === "experience"}>
+              <div className="w-full max-w-4xl xl:max-w-[68rem]">
+                  <ExperiencePanel experience={experienceItems} theme={theme} />
+              </div>
+            </StoryBandPanel>
+            <StoryBandPanel index={1} position={sectionPosition} isActive={activeBand === "skills"}>
+              <div className="w-full max-w-4xl xl:max-w-[68rem]">
+                  <SkillsPanel skills={skillGroups} theme={theme} />
+              </div>
+            </StoryBandPanel>
+            <StoryBandPanel index={2} position={sectionPosition} isActive={activeBand === "projects"}>
+              <div className="w-full max-w-4xl xl:max-w-[68rem]">
+                  <ProjectsPanel projects={projectItems} theme={theme} />
+              </div>
+            </StoryBandPanel>
+          </div>
+        </div>
       </motion.div>
 
-    </div>
+    </motion.div>
   );
 }
 
-function SkillsPanel({
+function StoryBandPanel({
+  index,
+  position,
+  isActive,
+  children,
+}: {
+  index: number;
+  position: MotionValue<number>;
+  isActive: boolean;
+  children: ReactNode;
+}) {
+  const y = useTransform(position, (value) => `${(index - value) * 108}%`);
+  const opacity = useTransform(position, (value) => {
+    const distance = Math.abs(value - index);
+    return Math.max(0, 1 - distance * 1.35);
+  });
+  const scale = useTransform(position, (value) => {
+    const distance = Math.min(Math.abs(value - index), 1);
+    return 1 - distance * 0.04;
+  });
+
+  return (
+    <motion.section
+      data-story-band={FREEFALL_BANDS[index]?.id}
+      className="absolute inset-0 flex items-center justify-center py-2 will-change-transform"
+      style={{ y, opacity, scale }}
+    >
+      <div className={isActive ? "pointer-events-auto w-full" : "pointer-events-none w-full"}>
+        {children}
+      </div>
+    </motion.section>
+  );
+}
+
+export function SkillsPanel({
   skills,
   theme,
 }: {
@@ -753,7 +854,7 @@ function SkillsPanel({
   );
 }
 
-function ProjectsPanel({
+export function ProjectsPanel({
   projects,
   theme,
 }: {
@@ -1121,7 +1222,7 @@ function ProjectsPanel({
   );
 }
 
-function ExperiencePanel({
+export function ExperiencePanel({
   experience,
   theme,
 }: {

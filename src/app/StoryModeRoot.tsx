@@ -105,31 +105,40 @@ export function StoryModeRoot({
     <div className="relative h-[800vh] bg-background">
       {/* Global story viewport */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        {activeScene === 'cargo' && (
+        <div
+          className={`absolute inset-0 z-10 ${
+            activeScene === 'cargo' ? 'pointer-events-auto' : 'pointer-events-none'
+          }`}
+        >
           <CargoHold scrollYProgress={scrollYProgress} theme={theme} />
-        )}
-        {activeScene === 'freefall' && (
+        </div>
+        <div
+          className={`absolute inset-0 z-20 ${
+            activeScene === 'freefall' ? 'pointer-events-auto' : 'pointer-events-none'
+          }`}
+        >
           <FreefallSection
             scrollYProgress={scrollYProgress}
             userNotes={notes}
             theme={theme}
             onOpenNote={() => setIsModalOpen(true)}
           />
-        )}
-        {activeScene === 'landing' && (
-          <div
-            data-story-scene="landing"
-            className="absolute inset-0 flex items-end justify-center pointer-events-none"
-          >
-            <div className="pointer-events-auto flex h-full w-full items-end">
-              <BeachLanding
-                projects={freefallProjects}
-                userNotes={notes}
-                theme={theme}
-              />
-            </div>
+        </div>
+        <div
+          data-story-scene="landing"
+          className={`absolute inset-0 z-30 flex items-end justify-center ${
+            activeScene === 'landing' ? 'pointer-events-auto' : 'pointer-events-none'
+          }`}
+        >
+          <div className="flex h-full w-full items-end">
+            <BeachLanding
+              projects={freefallProjects}
+              userNotes={notes}
+              theme={theme}
+              scrollYProgress={scrollYProgress}
+            />
           </div>
-        )}
+        </div>
       </div>
 
       {/* Fixed CTA for notes */}

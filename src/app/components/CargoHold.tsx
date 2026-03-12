@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   motion,
+  useTransform,
   type MotionValue,
 } from "motion/react";
 import { SUBSTANCE } from "@/constants/substance";
@@ -26,9 +27,12 @@ const STAR_POSITIONS = [
 ];
 
 export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
-  void scrollYProgress;
   const isDark = theme === "dark";
   const [playIntroDolly, setPlayIntroDolly] = useState(false);
+  const lowerSkyOpacity = useTransform(scrollYProgress, [0, 0.12, 0.2], [0.34, 0.46, 0.72]);
+  const horizonGlowOpacity = useTransform(scrollYProgress, [0, 0.12, 0.2], [0.18, 0.24, 0.38]);
+  const contentY = useTransform(scrollYProgress, [0, 0.12, 0.2], ["0%", "0%", "-6%"]);
+  const companionY = useTransform(scrollYProgress, [0, 0.12, 0.2], ["0%", "2%", "8%"]);
   const heroProjectBullets = [
     "Dear Days, collaborative family calendar platform focused on shared memories and connection",
     "Storybot, Reddit-to-video automation workflow for scripting, voiceover, editing, and delivery",
@@ -46,14 +50,19 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
   return (
     <motion.div
       data-story-scene="cargo"
-      className={`relative sticky top-0 h-screen w-screen overflow-hidden ${
+      className={`absolute inset-0 h-full w-full overflow-hidden ${
         isDark ? "bg-[#05080B]" : "bg-[#DDE5EC]"
       }`}
     >
-      <div className="pointer-events-none absolute inset-0 z-10">
+      <motion.div
+        className="pointer-events-none absolute inset-0 z-10"
+        style={{ y: contentY }}
+      >
         <div
           className={`absolute inset-0 ${
-            isDark ? "bg-[#040A12]" : "bg-[#DDE5EC]"
+            isDark
+              ? "bg-[linear-gradient(180deg,#05080B_0%,#08111B_38%,#0E1B2A_74%,#13283D_100%)]"
+              : "bg-[linear-gradient(180deg,#E7EDF2_0%,#DDE8F1_34%,#C9DEF1_70%,#B8D3EA_100%)]"
           }`}
         />
         {isDark ? (
@@ -67,24 +76,27 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
         ) : (
           <div className="absolute inset-x-0 top-[8%] mx-auto h-16 w-16 rounded-full border border-[#F19A3E]/30 bg-[#F5F7FA]" />
         )}
-        <div
-          className={`absolute inset-x-0 bottom-0 h-[34vh] ${
-            isDark ? "bg-[#1B3A2A]" : "bg-[#7A9A75]"
-          } [clip-path:polygon(0_100%,0_45%,18%_62%,36%_50%,52%_66%,70%_52%,86%_64%,100%_46%,100%_100%)]`}
+        <motion.div
+          className="absolute inset-x-0 bottom-0 h-[42vh]"
+          style={{
+            opacity: lowerSkyOpacity,
+            background: isDark
+              ? "linear-gradient(180deg, rgba(5,8,11,0) 0%, rgba(7,18,30,0.28) 26%, rgba(10,25,40,0.6) 58%, rgba(14,37,59,0.92) 100%)"
+              : "linear-gradient(180deg, rgba(231,237,242,0) 0%, rgba(198,222,242,0.16) 28%, rgba(173,205,233,0.46) 62%, rgba(147,186,220,0.86) 100%)",
+          }}
+        />
+        <motion.div
+          className="absolute inset-x-[10%] bottom-[-10vh] h-[28vh] rounded-[999px] blur-3xl"
+          style={{
+            opacity: horizonGlowOpacity,
+            background: isDark
+              ? "radial-gradient(circle, rgba(149,196,235,0.22) 0%, rgba(58,117,173,0.16) 34%, transparent 74%)"
+              : "radial-gradient(circle, rgba(255,255,255,0.55) 0%, rgba(210,233,252,0.28) 38%, transparent 74%)",
+          }}
         />
         <div
-          className={`absolute inset-x-0 bottom-0 h-[22vh] ${
-            isDark ? "bg-[#0D1F18]/88" : "bg-[#4E6650]/65"
-          }`}
-        />
-        <div
-          className={`absolute bottom-0 left-1/2 h-[18vh] w-[26vw] -translate-x-1/2 rounded-t-[2rem] border border-white/15 ${
-            isDark ? "bg-[#1C4B36]/80" : "bg-[#6F8B6A]/75"
-          }`}
-        />
-        <div
-          className={`absolute bottom-[9vh] left-1/2 h-[2px] w-[26vw] -translate-x-1/2 ${
-            isDark ? "bg-white/20" : "bg-[#3B413C]/25"
+          className={`absolute inset-x-0 bottom-0 h-[1px] ${
+            isDark ? "bg-white/8" : "bg-white/35"
           }`}
         />
         <div
@@ -110,7 +122,7 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
                   isDark ? "text-[#F4FAFD]" : "text-[#1F2C36]"
                 }`}
               >
-                <AuroraText text="Hi, Stephen" />
+                <AuroraText text="Hi, I'm Stephen" />
               </h2>
               <p
                 className={`max-w-3xl text-base leading-relaxed md:text-lg ${
@@ -204,13 +216,15 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
             </aside>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <ParachuteCompanion
-        stage="cargo"
-        theme={theme}
-        className="pointer-events-none absolute left-[64%] top-[18%] z-[15] hidden md:block"
-      />
+      <motion.div style={{ y: companionY }}>
+        <ParachuteCompanion
+          stage="cargo"
+          theme={theme}
+          className="pointer-events-none absolute left-[64%] top-[18%] z-[15] hidden md:block"
+        />
+      </motion.div>
     </motion.div>
   );
 }

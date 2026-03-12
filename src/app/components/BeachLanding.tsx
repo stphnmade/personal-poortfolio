@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { motion } from 'motion/react'
+import { motion, useTransform, type MotionValue } from 'motion/react'
 import {
   FaBriefcase,
   FaEnvelope,
@@ -21,6 +21,7 @@ interface BeachLandingProps {
     title: string
     description: string
   }[]
+  scrollYProgress: MotionValue<number>
   theme: 'dark' | 'light'
   userNotes: {
     id: string
@@ -31,13 +32,6 @@ interface BeachLandingProps {
 }
 
 type DesertFeature = 'cactus' | 'sand' | 'rock'
-
-const snapTransition = {
-  type: 'spring',
-  stiffness: 100,
-  damping: 15,
-  mass: 1,
-}
 
 function getOldestYear(experienceItems: typeof SUBSTANCE.experience) {
   const years = experienceItems
@@ -128,7 +122,12 @@ function SandpileMarker({ isDark }: { isDark: boolean }) {
   )
 }
 
-export function BeachLanding({ projects, userNotes, theme }: BeachLandingProps) {
+export function BeachLanding({
+  projects,
+  userNotes,
+  theme,
+  scrollYProgress,
+}: BeachLandingProps) {
   const isDark = theme === 'dark'
   const experienceItems = SUBSTANCE.experience
   const allProjects = SUBSTANCE.projects
@@ -141,6 +140,16 @@ export function BeachLanding({ projects, userNotes, theme }: BeachLandingProps) 
   const { links } = SUBSTANCE.meta
   const [activeFeature, setActiveFeature] = useState<DesertFeature>('cactus')
   const [notesExpanded, setNotesExpanded] = useState(true)
+  const sceneY = useTransform(
+    scrollYProgress,
+    [0, 0.82, 0.91, 1],
+    ['100%', '100%', '0%', '0%'],
+  )
+  const contentY = useTransform(
+    scrollYProgress,
+    [0.82, 0.91, 1],
+    ['10%', '0%', '-2%'],
+  )
 
   const communityNotes = useMemo(
     () =>
@@ -190,14 +199,12 @@ export function BeachLanding({ projects, userNotes, theme }: BeachLandingProps) 
 
   return (
     <motion.div
-      className={`relative flex h-full w-full items-end justify-center overflow-hidden ${
+      className={`absolute inset-0 flex h-full w-full items-end justify-center overflow-hidden ${
         isDark
           ? 'bg-[linear-gradient(180deg,#070E16_0%,#111D2D_24%,#28331E_52%,#4A3823_77%,#5A442B_100%)]'
           : 'bg-[linear-gradient(180deg,#E9F2FF_0%,#CAE1FA_25%,#D6C6B0_55%,#BB9364_79%,#A67D53_100%)]'
       }`}
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={snapTransition}
+      style={{ y: sceneY }}
     >
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute right-[10%] top-[9%] h-28 w-28 rounded-full bg-[radial-gradient(circle_at_30%_28%,#FFFDF7_0%,#F4EFE0_56%,#DDD3BD_100%)] shadow-[0_0_90px_rgba(255,247,220,0.42)]">
@@ -321,7 +328,10 @@ export function BeachLanding({ projects, userNotes, theme }: BeachLandingProps) 
         className="pointer-events-none absolute left-[14%] top-[18%] z-20"
       />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col justify-end px-6 pb-8">
+      <motion.div
+        className="relative z-10 mx-auto flex w-full max-w-6xl flex-col justify-end px-6 pb-8"
+        style={{ y: contentY }}
+      >
         <div className="mb-2 flex items-center justify-center">
           <p
             className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] ${
@@ -489,7 +499,7 @@ export function BeachLanding({ projects, userNotes, theme }: BeachLandingProps) 
             ]}
           />
         </footer>
-      </div>
+      </motion.div>
     </motion.div>
   )
 }

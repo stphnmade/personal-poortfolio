@@ -593,6 +593,13 @@ export const SUBSTANCE = {
         "Produced an instructor-reviewed report and reproducible workflow highlighting measurable increases in three-point dependency over time.",
       ],
       stack: ["R", "tidyverse", "ggplot2", "Quarto", "GitHub"],
+      links: [
+        {
+          label: "Open Analysis Site",
+          href: "https://stphnmade.github.io/NBA-SHOT-analysis/",
+          external: true,
+        },
+      ],
       media: [
         {
           kind: "image",
