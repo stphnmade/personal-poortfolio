@@ -106,7 +106,7 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
               : ""
           }`}
         >
-          <div className="grid w-full gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+          <div className="grid w-full gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-8">
             <section className="space-y-5">
               <span
                 className={`inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] ${
@@ -125,14 +125,14 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
                 <AuroraText text="Hi, I'm Stephen" />
               </h2>
               <p
-                className={`max-w-3xl text-base leading-relaxed md:text-lg ${
+                className={`story-readable max-w-3xl text-base leading-relaxed md:text-lg ${
                   isDark ? "text-[#D7E2E9]" : "text-[#2E3A44]"
                 }`}
               >
                 {SUBSTANCE.meta.title}
               </p>
               <p
-                className={`max-w-3xl text-sm leading-relaxed md:text-base ${
+                className={`story-readable max-w-3xl text-sm leading-relaxed md:text-base ${
                   isDark ? "text-[#B5C4CF]" : "text-[#45525C]"
                 }`}
               >
@@ -171,7 +171,7 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
             </section>
 
             <aside
-              className={`rounded-2xl border p-5 shadow-[0_24px_70px_rgba(0,0,0,0.45)] backdrop-blur ${
+              className={`story-glass rounded-2xl border p-5 shadow-[0_24px_70px_rgba(0,0,0,0.45)] ${
                 isDark
                   ? "border-white/12 bg-[#111C25]/92"
                   : "border-[#3B413C]/16 bg-white/90"
@@ -222,7 +222,7 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
         <ParachuteCompanion
           stage="cargo"
           theme={theme}
-          className="pointer-events-none absolute left-[64%] top-[18%] z-[15] hidden md:block"
+          className="pointer-events-none absolute right-[6vw] top-[14vh] z-[5] hidden lg:block"
         />
       </motion.div>
     </motion.div>

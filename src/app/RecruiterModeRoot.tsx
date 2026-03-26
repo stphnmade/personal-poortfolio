@@ -207,7 +207,7 @@ export function RecruiterModeRoot() {
               </div>
             </div>
 
-            <p className="mt-4 text-sm leading-relaxed text-[#3D4D5B] dark:text-[#D6E0E7]">
+            <p className="recruiter-readable mt-4 text-sm leading-relaxed text-[#3D4D5B] dark:text-[#D6E0E7]">
               {hero.subheadline}
             </p>
 
@@ -300,7 +300,7 @@ export function RecruiterModeRoot() {
           <section id="section-about" className="scroll-mt-24">
             <div className={`${panelBase} p-6`}>
               <h2 className="text-h2-sans text-[#102133] dark:text-[#F7FBFF]">About</h2>
-              <p className="mt-3 text-body-sans text-[#3D4D5B] dark:text-[#D6E0E7]">
+              <p className="recruiter-readable mt-3 text-body-sans text-[#3D4D5B] dark:text-[#D6E0E7]">
                 I build practical products that connect UX clarity, backend reliability, and measurable outcomes. This page is optimized for quick recruiter review, with the strongest proof surfaced first.
               </p>
               <p className="mt-3 text-sm text-[#546575] dark:text-[#B8C4CD]">
@@ -366,7 +366,7 @@ export function RecruiterModeRoot() {
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <h2 className="text-h2-sans text-[#102133] dark:text-[#F7FBFF]">{labels.projects}</h2>
-                  <p className="mt-2 text-sm text-[#546575] dark:text-[#D6E0E7]">
+                  <p className="recruiter-readable mt-2 text-sm text-[#546575] dark:text-[#D6E0E7]">
                     Featured first for quick review. Expand the full project archive when you want the full breadth.
                   </p>
                 </div>
@@ -391,7 +391,7 @@ export function RecruiterModeRoot() {
                 </div>
               )}
 
-              <div className="mt-6 grid gap-4 lg:grid-cols-2">
+              <div className="recruiter-project-grid mt-6">
                 {(showAllProjects
                   ? [...featuredProjects, ...archivedProjects]
                   : featuredProjects
@@ -400,7 +400,7 @@ export function RecruiterModeRoot() {
                   return (
                   <article
                     key={project.id}
-                    className="relative isolate overflow-hidden rounded-2xl border border-[#D5E0E8] bg-[#F7FAFC] p-5 transition-colors duration-300 dark:border-white/10 dark:bg-white/5"
+                    className="relative isolate min-w-0 overflow-hidden rounded-2xl border border-[#D5E0E8] bg-[#F7FAFC] p-5 transition-colors duration-300 dark:border-white/10 dark:bg-white/5"
                   >
                     <BorderBeam duration={5 + (project.name.length % 4)} />
                     <div className="flex items-center justify-between gap-2">
@@ -423,7 +423,7 @@ export function RecruiterModeRoot() {
                     <h3 className="mt-1 text-base font-semibold text-[#102133] dark:text-[#FFFFFF]">
                       {project.name}
                     </h3>
-                    <p className="mt-2 text-sm text-[#3D4D5B] dark:text-[#D6E0E7]">
+                    <p className="recruiter-readable mt-2 text-sm text-[#3D4D5B] dark:text-[#D6E0E7]">
                       {project.tagline}
                     </p>
                     <div className="mt-3 rounded-xl border border-[#59A96A]/15 bg-[#EEF7F1] px-3 py-2 dark:border-[#59A96A]/18 dark:bg-[#0E1C18]/55">
@@ -440,16 +440,16 @@ export function RecruiterModeRoot() {
                       <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#5C6A77] dark:text-[#B8C4CD]">
                         Quick Look
                       </p>
-                      <div className="mt-2 overflow-hidden rounded-xl border border-[#C8D4DE] bg-[#EAF0F5] dark:border-white/14 dark:bg-[#0F171F]">
+                      <div className="project-quicklook-frame mt-2 rounded-xl border border-[#C8D4DE] bg-[#EAF0F5] dark:border-white/14 dark:bg-[#0F171F]">
                         {project.media && project.media.length > 0 ? (
                           project.media[0].kind === "image" ? (
                             <img
                               src={project.media[0].src}
                               alt={project.media[0].alt}
-                              className="h-44 w-full object-cover"
+                              className="block"
                             />
                           ) : (
-                            <div className="aspect-video w-full overflow-hidden">
+                            <div>
                               <iframe
                                 src={project.media[0].embedUrl}
                                 title={project.media[0].title || project.name}
@@ -460,7 +460,7 @@ export function RecruiterModeRoot() {
                             </div>
                           )
                         ) : (
-                          <div className="relative flex h-44 items-center justify-center bg-[#E6EDF3] dark:bg-[#0F1519]">
+                          <div className="relative flex items-center justify-center bg-[#E6EDF3] dark:bg-[#0F1519]">
                             <div className="absolute -left-8 -top-10 h-28 w-28 rounded-full bg-[#59A96A]/18 blur-xl" />
                             <div className="absolute -bottom-12 -right-8 h-32 w-32 rounded-full bg-[#F19A3E]/20 blur-xl" />
                             <FaTools className="h-11 w-11 text-[#1F2E3B]/70 dark:text-white/75" />

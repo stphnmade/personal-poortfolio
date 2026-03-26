@@ -25,7 +25,7 @@ export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps)
   };
 
   return (
-    <div className="modal-drop-note fixed inset-0 z-50 flex items-center justify-center">
+    <div className="modal-drop-note story-stage-overlay fixed inset-0 flex items-center justify-center px-4">
       {/* Backdrop */}
       <div 
         className="modal-backdrop absolute inset-0 bg-black/50 backdrop-blur-sm"
@@ -33,7 +33,7 @@ export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps)
       />
       
       {/* Modal */}
-      <div className="modal-content relative bg-card rounded-lg shadow-2xl p-8 max-w-md w-full mx-4 border border-border">
+      <div className="modal-content story-glass relative w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-2xl sm:p-8">
         <h2 className="modal-title text-h2-sans mb-1 text-foreground">{copy.modalTitle}</h2>
         <p className="text-body-sans mb-5 text-muted-foreground">
           {copy.modalSubtitle}

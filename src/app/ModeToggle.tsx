@@ -20,7 +20,7 @@ export function ModeToggle({
 
   return (
     <div
-      className={`fixed left-1/2 top-4 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full border px-2.5 py-2 shadow-md backdrop-blur transition-all ${
+      className={`story-stage-ui story-glass fixed left-1/2 top-4 flex -translate-x-1/2 items-center gap-2 rounded-full border px-2.5 py-2 shadow-md transition-all ${
         isDark
           ? 'border-white/15 bg-[#0E151B]/85 text-[#ECF3F7]'
           : 'border-black/10 bg-white/85 text-[#3B413C]'

@@ -325,16 +325,16 @@ export function BeachLanding({
       <ParachuteCompanion
         stage="landing"
         theme={theme}
-        className="pointer-events-none absolute left-[14%] top-[18%] z-20"
+        className="pointer-events-none absolute left-[8vw] top-[14vh] z-[5] hidden lg:block"
       />
 
       <motion.div
-        className="relative z-10 mx-auto flex w-full max-w-6xl flex-col justify-end px-6 pb-8"
+        className="relative z-10 mx-auto flex w-full max-w-6xl flex-col justify-end px-4 pb-6 sm:px-6 sm:pb-8"
         style={{ y: contentY }}
       >
-        <div className="mb-2 flex items-center justify-center">
+        <div className="mb-3 flex items-center justify-center">
           <p
-            className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] ${
+            className={`story-glass rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] ${
               isDark
                 ? 'border-[#B08A60]/30 bg-[#4A3323]/60 text-[#FFE7CA]'
                 : 'border-[#C29A6B]/45 bg-[#E8C79B]/70 text-[#5A3A1F]'
@@ -343,7 +343,7 @@ export function BeachLanding({
             Tap a crate to highlight the terrain
           </p>
         </div>
-        <div className="flex flex-wrap items-end justify-center gap-3">
+        <div className="story-crate-grid w-full">
           {summaryCards.map((card, index) => {
             const isActive = activeFeature === card.feature
             return (
@@ -354,7 +354,7 @@ export function BeachLanding({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.25, delay: index * 0.05 }}
                 onClick={() => setActiveFeature(card.feature)}
-                className={`max-w-[20rem] border px-3 py-2 text-left shadow-sm transition-all duration-200 ${
+                className={`story-glass min-h-[9.75rem] w-full border px-3 py-3 text-left shadow-sm transition-all duration-200 ${
                   isActive
                     ? isDark
                       ? 'border-[#F1C182]/65 bg-[#6A4B2E]/92 text-[#FFE7CA] shadow-[0_0_20px_rgba(241,193,130,0.26)]'
@@ -363,7 +363,6 @@ export function BeachLanding({
                     ? 'border-[#8A6A46]/40 bg-[#5A3F29]/86 text-[#F2DFC8]'
                     : 'border-[#B58C60]/45 bg-[#D4AD7C]/92 text-[#4A2E1A]'
                 }`}
-                style={{ transform: `rotate(${(index % 5) - 2}deg)` }}
               >
                 <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.08em]">
                   {card.icon}
@@ -397,7 +396,7 @@ export function BeachLanding({
         </div>
 
         <section
-          className={`mx-auto mt-3 w-full max-w-3xl rounded-2xl border px-3 py-2 backdrop-blur ${
+          className={`story-glass mx-auto mt-3 w-full max-w-3xl rounded-2xl border px-3 py-2 ${
             isDark
               ? 'border-[#9C7A52]/40 bg-[#3E2C1E]/76'
               : 'border-[#C29A6B]/52 bg-[#E7C499]/86'

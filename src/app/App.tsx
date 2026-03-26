@@ -28,8 +28,28 @@ export default function App() {
     window.localStorage.setItem('portfolio-theme', theme)
   }, [theme])
 
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+
+    document.body.dataset.viewMode = mode
+    document.body.dataset.theme = theme
+    document.documentElement.dataset.viewMode = mode
+  }, [mode, theme])
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+
+    return () => {
+      delete document.body.dataset.viewMode
+      delete document.body.dataset.theme
+      delete document.documentElement.dataset.viewMode
+      document.body.classList.remove('story-scroll-locked')
+      document.body.style.top = ''
+    }
+  }, [])
+
   return (
-    <div className="w-full bg-background text-foreground">
+    <div className="app-shell min-h-screen w-full bg-background text-foreground">
       <ModeToggle
         mode={mode}
         theme={theme}

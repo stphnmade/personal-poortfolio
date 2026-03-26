@@ -101,53 +101,74 @@ export function StoryModeRoot({
     }
   }, [])
 
+  useEffect(() => {
+    if (typeof document === 'undefined' || typeof window === 'undefined') return
+
+    const body = document.body
+    if (!isModalOpen) {
+      body.classList.remove('story-scroll-locked')
+      body.style.top = ''
+      return
+    }
+
+    const scrollY = window.scrollY
+    body.classList.add('story-scroll-locked')
+    body.style.top = `-${scrollY}px`
+
+    return () => {
+      body.classList.remove('story-scroll-locked')
+      body.style.top = ''
+      window.scrollTo({ top: scrollY, behavior: 'auto' })
+    }
+  }, [isModalOpen])
+
   return (
-    <div className="relative h-[800vh] bg-background">
-      {/* Global story viewport */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
-        <div
-          className={`absolute inset-0 z-10 ${
-            activeScene === 'cargo' ? 'pointer-events-auto' : 'pointer-events-none'
-          }`}
-        >
-          <CargoHold scrollYProgress={scrollYProgress} theme={theme} />
-        </div>
-        <div
-          className={`absolute inset-0 z-20 ${
-            activeScene === 'freefall' ? 'pointer-events-auto' : 'pointer-events-none'
-          }`}
-        >
-          <FreefallSection
-            scrollYProgress={scrollYProgress}
-            userNotes={notes}
-            theme={theme}
-            onOpenNote={() => setIsModalOpen(true)}
-          />
-        </div>
-        <div
-          data-story-scene="landing"
-          className={`absolute inset-0 z-30 flex items-end justify-center ${
-            activeScene === 'landing' ? 'pointer-events-auto' : 'pointer-events-none'
-          }`}
-        >
-          <div className="flex h-full w-full items-end">
-            <BeachLanding
-              projects={freefallProjects}
+    <div className="story-shell bg-background">
+      <div className="story-stage relative h-[800vh]">
+        <div className="story-stage-viewport h-screen w-full">
+          <div
+            className={`story-stage-scene story-stage-content ${
+              activeScene === 'cargo' ? 'pointer-events-auto' : 'pointer-events-none'
+            }`}
+          >
+            <CargoHold scrollYProgress={scrollYProgress} theme={theme} />
+          </div>
+          <div
+            className={`story-stage-scene story-stage-content ${
+              activeScene === 'freefall' ? 'pointer-events-auto' : 'pointer-events-none'
+            }`}
+          >
+            <FreefallSection
+              scrollYProgress={scrollYProgress}
               userNotes={notes}
               theme={theme}
-              scrollYProgress={scrollYProgress}
+              onOpenNote={() => setIsModalOpen(true)}
             />
+          </div>
+          <div
+            data-story-scene="landing"
+            className={`story-stage-scene story-stage-content flex items-end justify-center ${
+              activeScene === 'landing' ? 'pointer-events-auto' : 'pointer-events-none'
+            }`}
+          >
+            <div className="flex h-full w-full items-end">
+              <BeachLanding
+                projects={freefallProjects}
+                userNotes={notes}
+                theme={theme}
+                scrollYProgress={scrollYProgress}
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Fixed CTA for notes */}
-      <div className="fixed bottom-6 left-6 z-40">
+      <div className="story-stage-ui fixed bottom-4 left-4 sm:bottom-6 sm:left-6">
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
           aria-label="Drop a sky note"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-[#59A96A] text-[#08120A] shadow-lg transition-all duration-200 hover:scale-105 hover:bg-[#4C975D] active:scale-95 sm:h-auto sm:w-auto sm:gap-2 sm:px-3 sm:py-2"
+          className="story-glass inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-[#59A96A] text-[#08120A] shadow-lg transition-all duration-200 hover:scale-105 hover:bg-[#4C975D] active:scale-95 sm:h-auto sm:w-auto sm:gap-2 sm:px-3 sm:py-2"
           data-cta-id="cta-drop-note-fixed-story"
         >
           <FaPaperPlane className="h-4 w-4" />
@@ -155,7 +176,6 @@ export function StoryModeRoot({
         </button>
       </div>
 
-      {/* Drop Note Modal */}
       <DropNoteModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
