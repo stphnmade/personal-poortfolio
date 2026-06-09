@@ -340,7 +340,7 @@ export function BeachLanding({
                 : 'border-[#C29A6B]/45 bg-[#E8C79B]/70 text-[#5A3A1F]'
             }`}
           >
-            Tap a crate to highlight the terrain
+            Pick a box to preview the details
           </p>
         </div>
         <div className="story-crate-grid w-full">

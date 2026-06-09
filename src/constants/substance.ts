@@ -203,7 +203,7 @@ export const SUBSTANCE = {
           placeholderMessage: "Tell me what stood out, or leave a fun message.",
           placeholderAuthor: "Anonymous",
         },
-        submit: "Drop it",
+        submit: "Leave Note",
       },
     },
 
@@ -237,9 +237,9 @@ export const SUBSTANCE = {
       headline: "Freefall",
       subheadline:
         "Follow the descent: impact first, then strengths, then the tools behind the build.",
-      experienceIntro: "First, my roles and what I changed.",
-      skillsIntro: "Then, what I can reliably do on a team.",
-      toolsIntro: "Finally, the tools I reach for to ship.",
+      experienceIntro: "First, where I made things better.",
+      skillsIntro: "Then, what teams can count on me for.",
+      toolsIntro: "Finally, the tools I use to ship.",
     },
 
     landing: {

@@ -301,10 +301,10 @@ export function RecruiterModeRoot() {
             <div className={`${panelBase} p-6`}>
               <h2 className="text-h2-sans text-[#102133] dark:text-[#F7FBFF]">About</h2>
               <p className="recruiter-readable mt-3 text-body-sans text-[#3D4D5B] dark:text-[#D6E0E7]">
-                I build practical products that connect UX clarity, backend reliability, and measurable outcomes. This page is optimized for quick recruiter review, with the strongest proof surfaced first.
+                I build practical products that connect UX clarity, backend reliability, and measurable outcomes. The strongest proof is surfaced first so you can quickly see how I think, build, and collaborate.
               </p>
               <p className="mt-3 text-sm text-[#546575] dark:text-[#B8C4CD]">
-                Recruiter version: concise summary here, deeper proof in Experience and Featured Projects below.
+                Start with the short version here, then scan the experience and featured projects for deeper proof.
               </p>
               <div className="mt-6 grid gap-3 sm:grid-cols-3">
                 {recruiterAboutCards.map((item) => (

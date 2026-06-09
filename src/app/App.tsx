@@ -16,10 +16,27 @@ export default function App() {
     if (savedTheme === 'dark' || savedTheme === 'light') {
       setTheme(savedTheme)
     }
+
+    const requestedMode = new URLSearchParams(window.location.search).get('mode')
+    const savedMode = window.localStorage.getItem('portfolio-mode')
+    if (requestedMode === 'story' || requestedMode === 'recruiter') {
+      setMode(requestedMode)
+      window.localStorage.setItem('portfolio-mode', requestedMode)
+      return
+    }
+    if (savedMode === 'story' || savedMode === 'recruiter') {
+      setMode(savedMode)
+    }
   }, [])
 
   const handleToggleMode = (next: 'story' | 'recruiter') => {
     setMode(next)
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('portfolio-mode', next)
+      const url = new URL(window.location.href)
+      url.searchParams.set('mode', next)
+      window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`)
+    }
   }
 
   useEffect(() => {

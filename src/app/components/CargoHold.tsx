@@ -100,7 +100,7 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
           }`}
         />
         <div
-          className={`relative z-10 mx-auto flex h-full w-full max-w-7xl items-center px-6 lg:px-10 ${
+          className={`relative z-10 mx-auto flex h-full w-full max-w-7xl items-start px-6 pb-24 pt-24 sm:items-center sm:pb-0 sm:pt-0 lg:px-10 ${
             playIntroDolly
               ? "animate-[cargoDollyReveal_6.6s_cubic-bezier(0.16,1,0.3,1)_forwards]"
               : ""
@@ -118,7 +118,7 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
                 Working
               </span>
               <h2
-                className={`text-4xl font-bold tracking-tight md:text-6xl ${
+                className={`text-4xl font-bold leading-[0.95] tracking-tight sm:text-5xl md:text-6xl ${
                   isDark ? "text-[#F4FAFD]" : "text-[#1F2C36]"
                 }`}
               >
@@ -182,16 +182,15 @@ export function CargoHold({ scrollYProgress, theme }: CargoHoldProps) {
                   isDark ? "text-[#B9C8D3]" : "text-[#4A5965]"
                 }`}
               >
-                Candidate Snapshot
+                The Short Version
               </p>
               <p
                 className={`mt-3 text-sm leading-relaxed ${
                   isDark ? "text-[#DDE8EF]" : "text-[#2B3842]"
                 }`}
               >
-                LinkedIn header: {SUBSTANCE.meta.title}. I build practical,
-                human-centered products that balance product strategy, UX, and
-                engineering execution.
+                I build practical, human-centered products that balance product
+                strategy, UX, data, and engineering execution.
               </p>
               <ul
                 className={`mt-4 space-y-2 text-sm leading-relaxed ${

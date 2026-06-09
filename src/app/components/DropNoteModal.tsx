@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SUBSTANCE } from '@/constants/substance';
 
 interface DropNoteModalProps {
@@ -10,7 +10,28 @@ interface DropNoteModalProps {
 export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps) {
   const [message, setMessage] = useState('');
   const [author, setAuthor] = useState('');
+  const messageRef = useRef<HTMLTextAreaElement>(null);
   const copy = SUBSTANCE.story.globalUI.noteDrop;
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const focusTimer = window.setTimeout(() => {
+      messageRef.current?.focus();
+    }, 0);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.clearTimeout(focusTimer);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -25,7 +46,13 @@ export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps)
   };
 
   return (
-    <div className="modal-drop-note story-stage-overlay fixed inset-0 flex items-center justify-center px-4">
+    <div
+      className="modal-drop-note story-stage-overlay fixed inset-0 flex items-center justify-center px-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="drop-note-title"
+      aria-describedby="drop-note-description"
+    >
       {/* Backdrop */}
       <div 
         className="modal-backdrop absolute inset-0 bg-black/50 backdrop-blur-sm"
@@ -34,8 +61,8 @@ export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps)
       
       {/* Modal */}
       <div className="modal-content story-glass relative w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-2xl sm:p-8">
-        <h2 className="modal-title text-h2-sans mb-1 text-foreground">{copy.modalTitle}</h2>
-        <p className="text-body-sans mb-5 text-muted-foreground">
+        <h2 id="drop-note-title" className="modal-title text-h2-sans mb-1 text-foreground">{copy.modalTitle}</h2>
+        <p id="drop-note-description" className="text-body-sans mb-5 text-muted-foreground">
           {copy.modalSubtitle}
         </p>
         
@@ -46,6 +73,7 @@ export function DropNoteModal({ isOpen, onClose, onSubmit }: DropNoteModalProps)
             </label>
             <textarea
               id="message"
+              ref={messageRef}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               className="form-input-message w-full p-3 rounded-md border border-border bg-input-background resize-none text-body-sans text-black placeholder:text-black/45 caret-black opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:text-black dark:placeholder:text-black/45 dark:caret-black"

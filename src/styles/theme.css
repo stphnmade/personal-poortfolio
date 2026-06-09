@@ -363,6 +363,10 @@
     max-width: 75ch;
   }
 
+  .hyper-text-char::before {
+    content: var(--hyper-text-char);
+  }
+
   .story-crate-grid {
     display: grid;
     gap: 0.85rem;

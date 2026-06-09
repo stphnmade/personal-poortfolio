@@ -163,7 +163,7 @@ export function StoryModeRoot({
         </div>
       </div>
 
-      <div className="story-stage-ui fixed bottom-4 left-4 sm:bottom-6 sm:left-6">
+      <div className="story-stage-ui fixed right-4 top-20 sm:bottom-6 sm:left-6 sm:right-auto sm:top-auto">
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}

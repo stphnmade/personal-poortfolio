@@ -82,7 +82,7 @@ export function NavigationSlider({ mode, activeChapterId }: NavigationSliderProp
 
   return (
     <div
-      className={`story-stage-ui fixed right-4 top-1/2 -translate-y-1/2 transition-opacity duration-300 ${
+      className={`story-stage-ui fixed bottom-4 right-4 transition-opacity duration-300 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 ${
         isVisibleWhileScrolling ? 'opacity-100' : 'opacity-70 hover:opacity-100'
       }`}
     >
@@ -94,11 +94,12 @@ export function NavigationSlider({ mode, activeChapterId }: NavigationSliderProp
           label: chapter.navLabel,
         }))}
         onMarkerClick={(chapterId) => handleJump(chapterId as ChapterId)}
+        className="hidden sm:block"
       />
       <button
         type="button"
         onClick={() => handleJump(activeVisibleChapter.id)}
-        className="story-glass mt-2 w-full rounded-full border border-white/15 bg-black/35 px-2 py-1 text-[10px] font-semibold text-white/85 transition-colors hover:bg-black/55"
+        className="story-glass mt-0 min-w-12 rounded-full border border-white/15 bg-black/35 px-2 py-1 text-[10px] font-semibold text-white/85 transition-colors hover:bg-black/55 sm:mt-2 sm:w-full"
         aria-label={`Jump to current chapter, ${activeVisibleChapter.navLabel}`}
         title={activeVisibleChapter.navLabel}
       >
